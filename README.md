@@ -1,3 +1,3 @@
 # moodly_client
 
-A new Flutter project.
+Client side of Moodly App
