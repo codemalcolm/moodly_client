@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:moodly_client/widgets/app_scaffold.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -9,7 +11,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Flutter + Node + Mongo', home: MainPage());
+    return MaterialApp(
+      title: 'Flutter + Node + Mongo',
+      home: MainPage(),
+      initialRoute: '/day-view',
+      routes: {
+        '/day-view': (context) => const AppScaffold(currentIndex: 0),
+        '/all-entries': (context) => const AppScaffold(currentIndex: 1),
+        '/calendar-view': (context) => const AppScaffold(currentIndex: 2),
+        '/new-entry': (context) => const AppScaffold(currentIndex: 3),
+        '/settings': (context) => const AppScaffold(currentIndex: 4),
+      },
+    );
   }
 }
 
