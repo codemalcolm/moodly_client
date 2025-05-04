@@ -19,12 +19,12 @@ class DarkColors {
 }
 
 class AccentColors {
-  static const blue = Color(0xFF3B82F6);
-  static const red = Color(0xFFEF4444);
-  static const orange = Color(0xFFF97316);
-  static const green = Color(0xFF10B981);
+  static const blue = Color.fromARGB(255, 95, 88, 226);
+  static const red = Color.fromARGB(255, 180, 76, 76);
+  static const orange = Color.fromARGB(255, 206, 125, 68);
+  static const green = Color.fromARGB(255, 75, 164, 171);
   static const yellow = Color(0xFFEAB308);
-  static const purple = Color(0xFF8B5CF6);
+  static const purple = Color.fromARGB(255, 133, 86, 162);
 }
 
 class AppTheme {

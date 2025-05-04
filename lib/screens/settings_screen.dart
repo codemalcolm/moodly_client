@@ -10,43 +10,46 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
 
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Text('App color', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 12,
-          children:
-              [
-                AccentColors.blue,
-                AccentColors.red,
-                AccentColors.orange,
-                AccentColors.green,
-                AccentColors.yellow,
-                AccentColors.purple,
-              ].map((color) {
-                return GestureDetector(
-                  onTap: () => themeNotifier.setPrimaryColor(color),
-                  child: CircleAvatar(
-                    radius: 20,
-                    backgroundColor: color,
-                    child:
-                        themeNotifier.primaryColor == color
-                            ? const Icon(Icons.check, color: Colors.white)
-                            : null,
-                  ),
-                );
-              }).toList(),
-        ),
-        SwitchListTile(
-          title: const Text('Dark Mode'),
-          value: themeNotifier.isDarkMode,
-          onChanged: (value) {
-            themeNotifier.toggleDarkMode(value);
-          },
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('App color', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 12,
+            children:
+                [
+                  AccentColors.blue,
+                  AccentColors.red,
+                  AccentColors.orange,
+                  AccentColors.green,
+                  AccentColors.yellow,
+                  AccentColors.purple,
+                ].map((color) {
+                  return GestureDetector(
+                    onTap: () => themeNotifier.setPrimaryColor(color),
+                    child: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: color,
+                      child:
+                          themeNotifier.primaryColor == color
+                              ? const Icon(Icons.check, color: Colors.white)
+                              : null,
+                    ),
+                  );
+                }).toList(),
+          ),
+          SwitchListTile(
+            title: const Text('Dark Mode'),
+            value: themeNotifier.isDarkMode,
+            onChanged: (value) {
+              themeNotifier.toggleDarkMode(value);
+            },
+          ),
+        ],
+      ),
     );
   }
 }
