@@ -3,6 +3,7 @@ import 'package:moodly_client/screens/fasties_screen.dart';
 import '../screens/day_view_screen.dart';
 import '../screens/new_entry_screen.dart';
 import '../screens/settings_screen.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class AppScaffold extends StatelessWidget {
   final int currentIndex;
@@ -34,13 +35,37 @@ class AppScaffold extends StatelessWidget {
             Navigator.pushReplacementNamed(context, _routes[index]);
           }
         },
-        destinations: const <NavigationDestination>[
-          NavigationDestination(icon: Icon(Icons.today_outlined), label: 'Day'),
-          NavigationDestination(icon: Icon(Icons.pets), label: 'Moodly'),
-          NavigationDestination(icon: Icon(Icons.settings), label: 'Settings'),
+        indicatorColor: Colors.transparent,
+        destinations: <NavigationDestination>[
+          const NavigationDestination(
+            icon: Icon(Icons.home_outlined, size: 30.0),
+            selectedIcon: Icon(Icons.home, size: 30.0),
+            label: 'Home',
+          ),
           NavigationDestination(
-            icon: Icon(Icons.add_circle_outline),
-            label: 'New',
+            icon: SvgPicture.asset(
+              'assets/icons/moodly_icon_outlined.svg',
+              width: 30,
+              height: 30,
+              color: Colors.black,
+            ),
+            selectedIcon: SvgPicture.asset(
+              'assets/icons/moodly_icon.svg',
+              width: 30,
+              height: 30,
+              color: Colors.black,
+            ),
+            label: 'Moodly',
+          ),
+          const NavigationDestination(
+            icon: Icon(Icons.settings_outlined, size: 30.0),
+            selectedIcon: Icon(Icons.settings, size: 30.0),
+            label: 'Settings',
+          ),
+          const NavigationDestination(
+            icon: Icon(Icons.add_circle_outline, size: 30.0),
+            selectedIcon: Icon(Icons.add_circle, size: 30.0),
+            label: 'Add Entry',
           ),
         ],
       ),

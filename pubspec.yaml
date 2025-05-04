@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_svg: ^2.0.7
   http: ^1.3.0
 
 
@@ -19,6 +20,10 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+   - assets/icons/moodly_icon.svg
+   - assets/icons/moodly_icon_outlined.svg
 
   fonts:
     - family: Montserrat
