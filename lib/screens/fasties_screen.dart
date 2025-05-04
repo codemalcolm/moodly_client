@@ -5,6 +5,6 @@ class FastiesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('3/3/2025', style: TextStyle(fontSize: 18)));
+    return Center(child: Text('Fasties', style: TextStyle(fontSize: 18)));
   }
 }
