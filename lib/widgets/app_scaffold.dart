@@ -37,9 +37,17 @@ class AppScaffold extends StatelessWidget {
         },
         indicatorColor: Colors.transparent,
         destinations: <NavigationDestination>[
-          const NavigationDestination(
-            icon: Icon(Icons.home_outlined, size: 30.0),
-            selectedIcon: Icon(Icons.home, size: 30.0),
+          NavigationDestination(
+            icon: Icon(
+              Icons.home_outlined,
+              size: 30.0,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            selectedIcon: Icon(
+              Icons.home,
+              size: 30.0,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             label: 'Home',
           ),
           NavigationDestination(
@@ -47,24 +55,46 @@ class AppScaffold extends StatelessWidget {
               'assets/icons/moodly_icon_outlined.svg',
               width: 30,
               height: 30,
-              color: Colors.black,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.secondary,
+                BlendMode.srcIn,
+              ),
             ),
             selectedIcon: SvgPicture.asset(
               'assets/icons/moodly_icon.svg',
               width: 30,
               height: 30,
-              color: Colors.black,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.primary,
+                BlendMode.srcIn,
+              ),
             ),
             label: 'Moodly',
           ),
-          const NavigationDestination(
-            icon: Icon(Icons.settings_outlined, size: 30.0),
-            selectedIcon: Icon(Icons.settings, size: 30.0),
+          NavigationDestination(
+            icon: Icon(
+              Icons.settings_outlined,
+              size: 30.0,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            selectedIcon: Icon(
+              Icons.settings,
+              size: 30.0,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             label: 'Settings',
           ),
-          const NavigationDestination(
-            icon: Icon(Icons.add_circle_outline, size: 30.0),
-            selectedIcon: Icon(Icons.add_circle, size: 30.0),
+          NavigationDestination(
+            icon: Icon(
+              Icons.add_circle_outline,
+              size: 30.0,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            selectedIcon: Icon(
+              Icons.add_circle,
+              size: 30.0,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             label: 'Add Entry',
           ),
         ],

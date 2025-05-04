@@ -27,12 +27,21 @@ class NewEntryScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 20),
+          TextField(
+            maxLines: 5,
+            decoration: InputDecoration(
+              labelText: 'Add image to your entry',
+              icon: Icon(Icons.photo),
+              border: OutlineInputBorder(),
+            ),
+          ),
+          SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
-              // Später: abspeichern
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Entry saved (not really 😄)')),
-              );
+              // TODO: save the entry.
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text('Entry saved (TODO)')));
             },
             child: Text('Save'),
           ),
