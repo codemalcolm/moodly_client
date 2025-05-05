@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 3840 3840" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g transform="matrix(0.964737,0,0,0.964737,127.297,-15.9742)">
+        <path d="M833.184,987.663L209.548,836.478C209.548,836.478 445.774,1521.53 493.019,1592.4C540.264,1663.27 -106.995,3160.94 1631.63,3453.86C3370.25,3746.78 3275.76,1743.59 3200.17,1497.91C3200.17,1497.91 3436.39,741.988 3502.54,666.395C3568.68,590.803 2864.73,737.263 2732.44,855.376C2732.44,855.376 1782.81,42.759 833.184,987.663Z" style="fill:none;stroke:black;stroke-width:165.85px;"/>
+        <path d="M1111.93,1223.89C1111.93,1223.89 1518.24,1663.27 1636.35,1653.82" style="fill:none;stroke:black;stroke-width:165.85px;"/>
+        <path d="M2524.56,1124.67C2524.56,1124.67 2156.05,1530.98 2151.32,1601.85" style="fill:none;stroke:black;stroke-width:165.85px;"/>
+        <path d="M2337.94,1776.66C2337.94,1776.66 2482.04,1606.58 2718.27,1790.83L2524.56,1705.83L2524.56,1956.19" style="fill:none;stroke:black;stroke-width:165.85px;"/>
+        <g transform="matrix(0.816779,0,0,0.955799,176.729,77.7576)">
+            <path d="M1111.93,1776.66C1111.93,1776.66 1291.46,1685.38 1584.38,1920C1877.3,2154.62 1374.14,1793.38 1374.14,1793.38L1374.14,2093.2" style="fill:none;stroke:black;stroke-width:186.55px;"/>
+        </g>
+        <g transform="matrix(1.36314,0,0,0.74122,-781.226,541.075)">
+            <path d="M1858.23,2006.74L2151.32,2006.74C2151.32,2006.74 2061.56,2310.53 1995.42,2305.8C1929.27,2301.08 1858.23,2006.74 1858.23,2006.74Z" style="fill:none;stroke:black;stroke-width:151.16px;"/>
+        </g>
+        <g transform="matrix(1,0,0,1,0,13)">
+            <path d="M1676,2679.04C1676,2679.04 1877.3,2296.36 2151.32,2688.49" style="fill:none;stroke:black;stroke-width:165.85px;"/>
+        </g>
+    </g>
+</svg>
