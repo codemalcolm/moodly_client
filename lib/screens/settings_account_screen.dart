@@ -1,0 +1,13 @@
+import 'package:flutter/material.dart';
+
+class SettingsAccountScreen extends StatelessWidget {
+  const SettingsAccountScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Account Settings')),
+      body: const Center(child: Text('TODO: Account bearbeiten')),
+    );
+  }
+}
