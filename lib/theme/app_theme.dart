@@ -30,6 +30,7 @@ class AccentColors {
 class AppTheme {
   static ThemeData lightTheme(Color primaryColor) {
     return ThemeData(
+      fontFamily: 'Montserrat',
       brightness: Brightness.light,
       scaffoldBackgroundColor: LightColors.background,
       primaryColor: primaryColor,
@@ -47,6 +48,7 @@ class AppTheme {
         backgroundColor: LightColors.surface,
         foregroundColor: LightColors.textPrimary,
         elevation: 0,
+        centerTitle: true,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -62,6 +64,7 @@ class AppTheme {
 
   static ThemeData darkTheme(Color primaryColor) {
     return ThemeData(
+      fontFamily: 'Montserrat',
       brightness: Brightness.dark,
       scaffoldBackgroundColor: DarkColors.background,
       primaryColor: primaryColor,
@@ -79,6 +82,7 @@ class AppTheme {
         backgroundColor: DarkColors.surface,
         foregroundColor: DarkColors.textPrimary,
         elevation: 0,
+        centerTitle: true,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
