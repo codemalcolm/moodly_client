@@ -45,15 +45,23 @@ class AppScaffold extends StatelessWidget {
         indicatorColor: Colors.transparent,
         destinations: <NavigationDestination>[
           NavigationDestination(
-            icon: Icon(
-              Icons.home_outlined,
-              size: 30.0,
-              color: Theme.of(context).colorScheme.secondary,
+            icon: SvgPicture.asset(
+              'assets/icons/icon_home_outlined.svg',
+              width: 30,
+              height: 30,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.secondary,
+                BlendMode.srcIn,
+              ),
             ),
-            selectedIcon: Icon(
-              Icons.home,
-              size: 30.0,
-              color: Theme.of(context).colorScheme.primary,
+            selectedIcon: SvgPicture.asset(
+              'assets/icons/icon_home.svg',
+              width: 30,
+              height: 30,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.primary,
+                BlendMode.srcIn,
+              ),
             ),
             label: 'Home',
           ),
@@ -79,28 +87,44 @@ class AppScaffold extends StatelessWidget {
             label: 'Moodly',
           ),
           NavigationDestination(
-            icon: Icon(
-              Icons.settings_outlined,
-              size: 30.0,
-              color: Theme.of(context).colorScheme.secondary,
+            icon: SvgPicture.asset(
+              'assets/icons/icon_settings_outlined.svg',
+              width: 30,
+              height: 30,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.secondary,
+                BlendMode.srcIn,
+              ),
             ),
-            selectedIcon: Icon(
-              Icons.settings,
-              size: 30.0,
-              color: Theme.of(context).colorScheme.primary,
+            selectedIcon: SvgPicture.asset(
+              'assets/icons/icon_settings.svg',
+              width: 30,
+              height: 30,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.primary,
+                BlendMode.srcIn,
+              ),
             ),
             label: 'Settings',
           ),
           NavigationDestination(
-            icon: Icon(
-              Icons.add_circle_outline,
-              size: 30.0,
-              color: Theme.of(context).colorScheme.secondary,
+            icon: SvgPicture.asset(
+              'assets/icons/icon_add_outlined.svg',
+              width: 30,
+              height: 30,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.secondary,
+                BlendMode.srcIn,
+              ),
             ),
-            selectedIcon: Icon(
-              Icons.add_circle,
-              size: 30.0,
-              color: Theme.of(context).colorScheme.primary,
+            selectedIcon: SvgPicture.asset(
+              'assets/icons/icon_add.svg',
+              width: 30,
+              height: 30,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.primary,
+                BlendMode.srcIn,
+              ),
             ),
             label: 'Add Entry',
           ),
