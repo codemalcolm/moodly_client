@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:moodly_client/widgets/custom_button.dart';
 
 class NewEntryScreen extends StatefulWidget {
   const NewEntryScreen({super.key});
@@ -194,7 +195,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
           const SizedBox(height: 32),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
+            child: CustomButton(
               onPressed: () {
                 if (selectedMoodIndex == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -208,7 +209,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                   const SnackBar(content: Text('Entry saved (TODO)')),
                 );
               },
-              child: const Text('Save'),
+              label: 'Create entry',
             ),
           ),
         ],
