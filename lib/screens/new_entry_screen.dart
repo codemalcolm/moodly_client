@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class NewEntryScreen extends StatefulWidget {
   const NewEntryScreen({super.key});
@@ -14,15 +15,15 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
   final List<File> imageFiles = [];
   final imagePicker = ImagePicker();
 
-  final List<IconData> moodIcons = [
-    Icons.sentiment_very_satisfied,
-    Icons.sentiment_satisfied,
-    Icons.sentiment_neutral,
-    Icons.sentiment_dissatisfied,
-    Icons.sentiment_very_dissatisfied,
-    Icons.emoji_emotions_outlined,
-    Icons.bedtime,
-    Icons.mood_bad,
+  final List<String> moodIconPaths = [
+    'assets/icons/icon_mood_angry.svg',
+    'assets/icons/icon_mood_good.svg',
+    'assets/icons/icon_mood_moody.svg',
+    'assets/icons/icon_mood_loving.svg',
+    'assets/icons/icon_mood_happy.svg',
+    'assets/icons/icon_mood_sad.svg',
+    'assets/icons/icon_mood_tired.svg',
+    'assets/icons/icon_mood_anxious.svg',
   ];
 
   Future<void> selectImage() async {
@@ -58,7 +59,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
           Wrap(
             spacing: 16,
             runSpacing: 16,
-            children: List.generate(moodIcons.length, (index) {
+            children: List.generate(moodIconPaths.length, (index) {
               final isSelected = selectedMoodIndex == index;
               return GestureDetector(
                 onTap: () {
@@ -78,22 +79,26 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                       width: 3,
                     ),
                   ),
-                  child: Icon(
-                    moodIcons[index],
-                    size: 40,
-                    color:
-                        isSelected
-                            ? theme.colorScheme.primary
-                            : theme.iconTheme.color,
+                  child: SvgPicture.asset(
+                    moodIconPaths[index],
+                    width: 40,
+                    height: 40,
+                    colorFilter: ColorFilter.mode(
+                      isSelected
+                          ? theme.colorScheme.primary
+                          : theme.iconTheme.color ?? Colors.black,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
               );
             }),
           ),
+
           const SizedBox(height: 24),
           TextField(
             decoration: const InputDecoration(
-              labelText: 'Entry',
+              labelText: 'What is on your mind?',
               border: OutlineInputBorder(),
             ),
             maxLines: 5,
@@ -131,7 +136,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                         child: Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.black.withOpacity(0.5),
+                            color: const Color.fromARGB(130, 0, 0, 0),
                           ),
                           padding: const EdgeInsets.all(4),
                           child: const Icon(
