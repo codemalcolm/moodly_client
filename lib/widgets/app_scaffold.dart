@@ -23,10 +23,17 @@ class AppScaffold extends StatelessWidget {
     '/new-entry',
   ];
 
+  static final List<String> _titles = [
+    'Home',
+    'Fasties',
+    'Settings',
+    'New Entry',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Moodly')),
+      appBar: AppBar(title: Text(_titles[currentIndex]), centerTitle: true),
       body: _pages[currentIndex],
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
