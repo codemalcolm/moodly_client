@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 3840 3840" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g>
+        <path d="M370.749,449.329C370.749,449.329 455.857,1252.5 485.386,1719.04C485.386,1719.04 184.198,3555.7 1772.82,3473.02C3042.78,3406.92 3437.16,2959.65 3447.73,2230.75C3447.89,2219.51 3441.6,2206.28 3447.94,2196.84C3636.35,1916.71 3719.24,1627.22 3683.66,1423.76C3683.66,1423.76 3632.36,1089.39 3349.07,936.234C3334.19,928.188 3347.36,902.468 3346.53,885.664C3336.74,687.052 3329.79,497.923 3331.91,390.273C3331.91,390.273 2888.98,626.499 2505.12,880.441C2505.12,880.441 1713.76,608.782 1099.57,957.214C1099.57,957.214 498.244,567.442 370.749,449.329Z" style="fill:none;stroke:black;stroke-width:160px;"/>
+        <g transform="matrix(1,0,0,1,-219.603,-147.641)">
+            <path d="M1070.04,1933C1070.04,1933 1560.21,2038.28 1684.23,1920" style="fill:none;stroke:black;stroke-width:160px;"/>
+        </g>
+        <g transform="matrix(1,0,0,1,-197.358,-185.739)">
+            <path d="M2198.02,1920C2178.52,1924.88 2395.08,2082.09 2753.15,1948.08" style="fill:none;stroke:black;stroke-width:160px;"/>
+        </g>
+        <path d="M2310.23,2332.67C2310.23,2332.67 2708.43,1938.64 2810.89,1772.36C2995.59,1472.61 2826.11,979.152 3220.02,938.938C3865.45,873.046 3763.34,2031.48 3361.76,2226.37C2973.47,2414.8 2310.23,2332.67 2310.23,2332.67Z" style="fill:none;stroke:black;stroke-width:160px;"/>
+        <g transform="matrix(1,0,0,1,-6,30)">
+            <path d="M1843.68,2327.32C1843.68,2327.32 1997.23,2262.36 2074,2285.98C2150.78,2309.61 2115.34,2469.06 2009.04,2498.59C1902.74,2528.12 1820.06,2410 1843.68,2327.32Z" style="fill:none;stroke:black;stroke-width:160px;"/>
+        </g>
+    </g>
+</svg>

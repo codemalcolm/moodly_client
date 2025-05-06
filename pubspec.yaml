@@ -9,8 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_svg: ^2.0.7
   http: ^1.3.0
-
+  image_picker: ^0.8.7+4
+  provider: ^6.1.1
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
@@ -19,3 +22,30 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+   - assets/icons/moodly_icon.svg
+   - assets/icons/moodly_icon_outlined.svg
+   - assets/icons/icon_add.svg
+   - assets/icons/icon_add_outlined.svg
+   - assets/icons/icon_home.svg
+   - assets/icons/icon_home_outlined.svg
+   - assets/icons/icon_mood_angry.svg
+   - assets/icons/icon_mood_anxious.svg
+   - assets/icons/icon_mood_good.svg
+   - assets/icons/icon_mood_happy.svg
+   - assets/icons/icon_mood_loving.svg
+   - assets/icons/icon_mood_moody.svg
+   - assets/icons/icon_mood_sad.svg
+   - assets/icons/icon_mood_tired.svg
+   - assets/icons/icon_settings.svg
+   - assets/icons/icon_settings_outlined.svg
+
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-ExtraBold.ttf
+        - asset: assets/fonts/Montserrat-Bold.ttf
+        - asset: assets/fonts/Montserrat-Italic.ttf
+          style: italic
+        - asset: assets/fonts/Montserrat-Medium.ttf  
