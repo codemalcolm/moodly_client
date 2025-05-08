@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moodly_client/widgets/custom_button.dart';
+import 'package:moodly_client/widgets/custom_image_picker.dart';
 
 class NewEntryScreen extends StatefulWidget {
   const NewEntryScreen({super.key});
@@ -13,7 +14,7 @@ class NewEntryScreen extends StatefulWidget {
 
 class _NewEntryScreenState extends State<NewEntryScreen> {
   int? selectedMoodIndex;
-  final List<File> imageFiles = [];
+  List<File> imageFiles = [];
   final imagePicker = ImagePicker();
 
   final List<String> moodIconPaths = [
@@ -49,7 +50,6 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final canAddMore = imageFiles.length < 5;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
@@ -113,84 +113,13 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              ...List.generate(imageFiles.length, (index) {
-                return Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.file(
-                        imageFiles[index],
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Positioned(
-                      top: 4,
-                      right: 4,
-                      child: GestureDetector(
-                        onTap: () => removeImage(index),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: const Color.fromARGB(130, 0, 0, 0),
-                          ),
-                          padding: const EdgeInsets.all(4),
-                          child: const Icon(
-                            Icons.close,
-                            size: 16,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 4,
-                      right: 4,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black54,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          '${index + 1}/5',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              }),
-              if (canAddMore)
-                GestureDetector(
-                  onTap: selectImage,
-                  child: Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surface,
-                      border: Border.all(color: theme.dividerColor),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(
-                      Icons.add,
-                      size: 40,
-                      color: theme.iconTheme.color,
-                    ),
-                  ),
-                ),
-            ],
+          CustomImagePicker(
+            initialImages: imageFiles,
+            onImagesChanged: (updatedImages) {
+              setState(() {
+                imageFiles = updatedImages;
+              });
+            },
           ),
           const SizedBox(height: 32),
           SizedBox(

@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:moodly_client/widgets/custom_image_picker.dart';
+import 'package:moodly_client/screens/image_preview_screen.dart';
 import 'package:moodly_client/widgets/custom_text_input.dart';
 
 class SettingsAccountScreen extends StatefulWidget {
@@ -10,6 +14,7 @@ class SettingsAccountScreen extends StatefulWidget {
 
 class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
   bool _isPasswordEditable = false;
+  List<File> imageFiles = [];
 
   @override
   Widget build(BuildContext context) {
@@ -40,26 +45,58 @@ class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
                             children: [
                               ListTile(
                                 leading: const Icon(Icons.visibility),
-                                title: const Text('View Profile Picture'),
+                                title: const Text('View profile picture'),
                                 onTap: () {
                                   Navigator.pop(context);
-                                  // TODO: Vollbild-Vorschau öffnen
+                                  if (imageFiles.isNotEmpty) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => ImagePreviewScreen(
+                                              image: imageFiles.first,
+                                            ),
+                                      ),
+                                    );
+                                  }
                                 },
                               ),
                               ListTile(
                                 leading: const Icon(Icons.photo),
-                                title: const Text('Change Profile Picture'),
-                                onTap: () {
+                                title: const Text('Change profile picture'),
+                                onTap: () async {
                                   Navigator.pop(context);
-                                  // TODO: Bildauswahl starten
+                                  final result =
+                                      await showModalBottomSheet<List<File>>(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        builder: (context) {
+                                          return CustomImagePicker(
+                                            initialImages: imageFiles,
+                                            onImagesChanged: (updatedImages) {
+                                              Navigator.pop(
+                                                context,
+                                                updatedImages,
+                                              );
+                                            },
+                                            maxImages: 1,
+                                          );
+                                        },
+                                      );
+
+                                  if (result != null) {
+                                    setState(() {
+                                      imageFiles = result;
+                                    });
+                                  }
                                 },
                               ),
                               ListTile(
                                 leading: const Icon(Icons.delete),
-                                title: const Text('Remove Profile Picture'),
+                                title: const Text('Remove profile picture'),
                                 onTap: () {
                                   Navigator.pop(context);
-                                  // TODO: Zurücksetzen des Bilds
+                                  // TODO: reset image
                                 },
                               ),
                             ],
@@ -67,10 +104,24 @@ class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
                         },
                       );
                     },
-                    child: const CircleAvatar(
+                    child: CircleAvatar(
                       radius: 50,
                       backgroundColor: Colors.grey,
-                      child: Icon(Icons.person, size: 50, color: Colors.white),
+                      child:
+                          imageFiles.isNotEmpty
+                              ? ClipOval(
+                                child: Image.file(
+                                  imageFiles.first,
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                              : const Icon(
+                                Icons.person,
+                                size: 50,
+                                color: Colors.white,
+                              ),
                     ),
                   ),
                 ],
@@ -96,7 +147,7 @@ class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
             const SizedBox(height: 8),
             const CustomTextInput(
               hintText: 'Full Name',
-              initialValue: 'Max Exampleman',
+              initialValue: 'Max moodly',
             ),
             const SizedBox(height: 24),
 
@@ -108,7 +159,7 @@ class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
             const CustomTextInput(
               hintText: 'Email',
               keyboardType: TextInputType.emailAddress,
-              initialValue: 'max.exampleman@moodly.com',
+              initialValue: 'user@moodly.com',
             ),
             const SizedBox(height: 24),
 

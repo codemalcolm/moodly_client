@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:moodly_client/screens/image_preview_screen.dart';
 import 'package:moodly_client/screens/settings_account_screen.dart';
 import 'package:moodly_client/theme/app_theme.dart';
 import 'package:moodly_client/theme/theme_notifier.dart';
@@ -33,6 +36,19 @@ class MyApp extends StatelessWidget {
         '/settings': (context) => const AppScaffold(currentIndex: 2),
         '/new-entry': (context) => const AppScaffold(currentIndex: 3),
         '/settings-account': (context) => const SettingsAccountScreen(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/image-preview') {
+          final args = settings.arguments as File;
+          return MaterialPageRoute(
+            builder: (context) => ImagePreviewScreen(image: args),
+          );
+        }
+        return MaterialPageRoute(
+          builder:
+              (context) =>
+                  const Scaffold(body: Center(child: Text('Page not found'))),
+        );
       },
     );
   }
