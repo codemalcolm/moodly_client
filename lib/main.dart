@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:moodly_client/screens/fasties_settings_screen.dart';
 import 'package:moodly_client/screens/image_preview_screen.dart';
 import 'package:moodly_client/screens/settings_account_screen.dart';
 import 'package:moodly_client/theme/app_theme.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         '/settings': (context) => const AppScaffold(currentIndex: 2),
         '/new-entry': (context) => const AppScaffold(currentIndex: 3),
         '/settings-account': (context) => const SettingsAccountScreen(),
+        '/fasties-settings': (context) => const FastiesSettingsScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/image-preview') {

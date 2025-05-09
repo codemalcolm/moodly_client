@@ -83,7 +83,7 @@ class _FastiesScreenState extends State<FastiesScreen> {
               ),
               IconButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/fasties_settings');
+                  Navigator.pushNamed(context, '/fasties-settings');
                 },
                 icon: const Icon(Icons.settings),
                 color: Colors.grey,

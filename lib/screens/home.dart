@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class DayViewScreen extends StatefulWidget {
-  const DayViewScreen({super.key});
+// temporary screen
+
+class Home extends StatefulWidget {
+  const Home({super.key});
 
   @override
-  State<DayViewScreen> createState() => _DayViewScreenState();
+  State<Home> createState() => _HomeState();
 }
 
-class _DayViewScreenState extends State<DayViewScreen> {
+class _HomeState extends State<Home> {
   final String backendUrl = 'http://10.0.2.2:5000/api/v1/entries';
 
   late Future<String> _messageFuture;

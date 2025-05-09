@@ -54,7 +54,7 @@ class MoodsCard extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
+              crossAxisCount: 5,
               crossAxisSpacing: 2,
               mainAxisSpacing: 2,
             ),
