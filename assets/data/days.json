@@ -1,0 +1,32 @@
+[
+  {
+    "dayEntry": {
+      "id": "day_001",
+      "date": "2025-04-28",
+      "mood": "happy",
+      "dailyTasks": ["task_101", "task_102"],
+      "journalEntries": ["journal_001", "journal_002"],
+      "entryDate": "2025-04-28T08:30:00Z"
+    }
+  },
+  {
+    "dayEntry": {
+      "id": "day_002",
+      "date": "2025-04-29",
+      "mood": "mid",
+      "dailyTasks": [],
+      "journalEntries": [],
+      "entryDate": "2025-04-29T09:00:00Z"
+    }
+  },
+  {
+    "dayEntry": {
+      "id": "day_003",
+      "date": "2025-04-30",
+      "mood": "sad",
+      "dailyTasks": ["task_103"],
+      "journalEntries": ["journal_003"],
+      "entryDate": "2025-04-30T07:45:00Z"
+    }
+  }
+]

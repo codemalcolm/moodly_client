@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moodly_client/screens/services/notification_settings_service.dart';
+import 'package:moodly_client/services/notification_settings_service.dart';
 import 'package:moodly_client/theme/theme_notifier.dart';
 import 'package:moodly_client/widgets/section_divider.dart';
 import 'package:moodly_client/widgets/theme_mode_selector.dart';

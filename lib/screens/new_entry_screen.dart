@@ -1,9 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moodly_client/widgets/custom_button.dart';
 import 'package:moodly_client/widgets/custom_image_selector.dart';
+import 'package:moodly_client/widgets/date_time_picker.dart';
+import 'package:moodly_client/widgets/moods_card.dart';
+import 'package:intl/intl.dart';
 
 class NewEntryScreen extends StatefulWidget {
   const NewEntryScreen({super.key});
@@ -12,21 +15,14 @@ class NewEntryScreen extends StatefulWidget {
   State<NewEntryScreen> createState() => _NewEntryScreenState();
 }
 
+DateTime selectedDateTime = DateTime.now();
+
 class _NewEntryScreenState extends State<NewEntryScreen> {
   int? selectedMoodIndex;
+  bool showMoodSelector = true;
+
   List<File> imageFiles = [];
   final imagePicker = ImagePicker();
-
-  final List<String> moodIconPaths = [
-    'assets/icons/icon_mood_angry.svg',
-    'assets/icons/icon_mood_good.svg',
-    'assets/icons/icon_mood_moody.svg',
-    'assets/icons/icon_mood_loving.svg',
-    'assets/icons/icon_mood_happy.svg',
-    'assets/icons/icon_mood_sad.svg',
-    'assets/icons/icon_mood_tired.svg',
-    'assets/icons/icon_mood_anxious.svg',
-  ];
 
   Future<void> selectImage() async {
     final picked = await imagePicker.pickImage(
@@ -41,6 +37,22 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
     }
   }
 
+  Future<void> pickDateTime() async {
+    final newDateTime = await DateTimePicker.pickDateTime(
+      context: context,
+      initialDateTime: selectedDateTime,
+    );
+    if (newDateTime != null) {
+      setState(() {
+        selectedDateTime = newDateTime;
+      });
+    }
+  }
+
+  String get formattedDateTime {
+    return DateFormat('dd.MM.yyyy - HH:mm').format(selectedDateTime);
+  }
+
   void removeImage(int index) {
     setState(() {
       imageFiles.removeAt(index);
@@ -50,52 +62,79 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('How do you feel?', style: theme.textTheme.titleMedium),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 16,
-            runSpacing: 16,
-            children: List.generate(moodIconPaths.length, (index) {
-              final isSelected = selectedMoodIndex == index;
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedMoodIndex = index;
-                  });
-                },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text("Entry for:", style: TextStyle(fontSize: 20)),
+              GestureDetector(
+                onTap: pickDateTime,
+                child: Row(
+                  children: [
+                    Text(
+                      formattedDateTime,
+                      style: TextStyle(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(Icons.edit_calendar, size: 20),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          if (selectedMoodIndex != null && !showMoodSelector)
+            GestureDetector(
+              onTap: () => setState(() => showMoodSelector = true),
+              child: Align(
+                alignment: Alignment.center,
                 child: Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color:
-                          isSelected
-                              ? theme.colorScheme.primary
-                              : Colors.transparent,
-                      width: 3,
-                    ),
+                    color: theme.colorScheme.surface,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: SvgPicture.asset(
-                    moodIconPaths[index],
-                    width: 40,
-                    height: 40,
+                    MoodsCard.moods[selectedMoodIndex!],
+                    width: 48,
+                    height: 48,
                     colorFilter: ColorFilter.mode(
-                      isSelected
-                          ? theme.colorScheme.primary
-                          : theme.iconTheme.color ?? Colors.black,
+                      theme.colorScheme.primary,
                       BlendMode.srcIn,
                     ),
                   ),
                 ),
-              );
-            }),
-          ),
-
+              ),
+            ),
+          if (selectedMoodIndex == null || showMoodSelector)
+            Column(
+              children: [
+                MoodsCard(
+                  selectedMoodIndex: selectedMoodIndex,
+                  onMoodSelected: (index) {
+                    setState(() {
+                      selectedMoodIndex = index;
+                      showMoodSelector = false;
+                    });
+                  },
+                ),
+              ],
+            ),
           const SizedBox(height: 24),
           TextField(
             decoration: const InputDecoration(
@@ -105,12 +144,9 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
             maxLines: 5,
           ),
           const SizedBox(height: 24),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Add images (${imageFiles.length}/5)',
-              style: theme.textTheme.titleMedium,
-            ),
+          Text(
+            'Add images (${imageFiles.length}/5)',
+            style: theme.textTheme.titleMedium,
           ),
           const SizedBox(height: 12),
           Wrap(
