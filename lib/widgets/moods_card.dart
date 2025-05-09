@@ -39,14 +39,13 @@ class MoodsCard extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4, // z. B. 4 Spalten
+              crossAxisCount: 4,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
             ),
             itemCount: moodIconPaths.length,
             itemBuilder: (context, index) {
               final isSelected = selectedMoodIndex == index;
-
               return GestureDetector(
                 onTap: () => onMoodSelected(index),
                 child: Container(

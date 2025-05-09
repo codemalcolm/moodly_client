@@ -19,7 +19,6 @@ class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-
     return Scaffold(
       appBar: AppBar(title: const Text('Account Settings')),
       body: SingleChildScrollView(
@@ -140,7 +139,6 @@ class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
               initialValue: 'Max moodly',
             ),
             const SizedBox(height: 24),
-
             Align(
               alignment: Alignment.centerLeft,
               child: Text('Email', style: textTheme.titleMedium),
@@ -152,8 +150,6 @@ class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
               initialValue: 'user@moodly.com',
             ),
             const SizedBox(height: 24),
-
-            // Password
             Align(
               alignment: Alignment.centerLeft,
               child: Text('Password', style: textTheme.titleMedium),

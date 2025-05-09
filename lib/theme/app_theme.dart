@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LightColors {
-  static const background = Color(0xFFF9FAFB);
-  static const surface = Color(0xFFF2F2F2);
+  static const background = Color(0xFFF9FBFB);
+  static const surface = Color(0xFFF4F9F9);
   static const secondary = Color(0xFF6B7280);
   static const textPrimary = Color(0xFF111827);
   static const textSecondary = Color(0xFF6B7280);
@@ -10,8 +10,8 @@ class LightColors {
 }
 
 class DarkColors {
-  static const background = Color(0xFF121212);
-  static const surface = Color(0xFF1E1E1E);
+  static const background = Color(0xFF1B150B);
+  static const surface = Color(0xFF292424);
   static const secondary = Color(0xFF9CA3AF);
   static const textPrimary = Color(0xFFF9FAFB);
   static const textSecondary = Color(0xFF9CA3AF);
@@ -19,12 +19,12 @@ class DarkColors {
 }
 
 class AccentColors {
-  static const blue = Color.fromARGB(255, 95, 88, 226);
-  static const red = Color.fromARGB(255, 180, 76, 76);
-  static const orange = Color.fromARGB(255, 206, 125, 68);
-  static const green = Color.fromARGB(255, 75, 164, 171);
-  static const yellow = Color(0xFFEAB308);
-  static const purple = Color.fromARGB(255, 133, 86, 162);
+  static const blue = Color(0xFF38D9A9);
+  static const red = Color(0xFF9775FA);
+  static const orange = Color(0xFFFFA94D);
+  static const green = Color(0xFFFFD43B);
+  static const yellow = Color(0xFFF783AC);
+  static const purple = Color(0xFF579AD1);
 }
 
 class AppTheme {
