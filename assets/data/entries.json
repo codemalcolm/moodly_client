@@ -1,0 +1,34 @@
+[
+    {
+        "_id": "681e023b055f0c5b2fb3449f",
+        "name": "Update",
+        "entryText": "Entry text update test",
+        "images": [],
+        "entryDateAndTime": "2025-05-09T15:30:00.000Z",
+        "__v": 1
+    },
+    {
+        "_id": "681e023b055f0c5b2fb344a0",
+        "name": "Morning Thoughts",
+        "entryText": "Had a quiet morning with some coffee and journaling.",
+        "images": [],
+        "entryDateAndTime": "2025-05-09T08:15:00.000Z",
+        "__v": 0
+    },
+    {
+        "_id": "681e023b055f0c5b2fb344a1",
+        "name": "Midday Walk",
+        "entryText": "Went for a short walk during lunch. Weather was great!",
+        "images": [],
+        "entryDateAndTime": "2025-05-09T12:00:00.000Z",
+        "__v": 0
+    },
+    {
+        "_id": "681e023b055f0c5b2fb344a2",
+        "name": "Evening Reflection",
+        "entryText": "Feeling grateful today. Made some good progress on work tasks.",
+        "images": [],
+        "entryDateAndTime": "2025-05-09T21:45:00.000Z",
+        "__v": 0
+    }
+]
