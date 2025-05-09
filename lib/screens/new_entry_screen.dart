@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moodly_client/widgets/custom_button.dart';
-import 'package:moodly_client/widgets/custom_image_picker.dart';
+import 'package:moodly_client/widgets/custom_image_selector.dart';
 
 class NewEntryScreen extends StatefulWidget {
   const NewEntryScreen({super.key});
@@ -113,13 +113,70 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          CustomImagePicker(
-            initialImages: imageFiles,
-            onImagesChanged: (updatedImages) {
-              setState(() {
-                imageFiles = updatedImages;
-              });
-            },
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              ...List.generate(imageFiles.length, (index) {
+                return Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.file(
+                        imageFiles[index],
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Positioned(
+                      top: 4,
+                      right: 4,
+                      child: GestureDetector(
+                        onTap: () => removeImage(index),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color.fromARGB(130, 0, 0, 0),
+                          ),
+                          padding: const EdgeInsets.all(4),
+                          child: const Icon(
+                            Icons.close,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }),
+              if (imageFiles.length < 5)
+                GestureDetector(
+                  onTap: () async {
+                    final picked = await CustomImageSelector.pickSingleImage();
+                    if (picked != null) {
+                      setState(() {
+                        imageFiles.add(picked);
+                      });
+                    }
+                  },
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      border: Border.all(color: theme.dividerColor),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.add,
+                      size: 40,
+                      color: theme.iconTheme.color,
+                    ),
+                  ),
+                ),
+            ],
           ),
           const SizedBox(height: 32),
           SizedBox(

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:moodly_client/widgets/custom_image_picker.dart';
+import 'package:moodly_client/widgets/custom_image_selector.dart';
 import 'package:moodly_client/screens/image_preview_screen.dart';
 import 'package:moodly_client/widgets/custom_text_input.dart';
 
@@ -66,37 +66,27 @@ class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
                                 title: const Text('Change profile picture'),
                                 onTap: () async {
                                   Navigator.pop(context);
-                                  final result =
-                                      await showModalBottomSheet<List<File>>(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        builder: (context) {
-                                          return CustomImagePicker(
-                                            initialImages: imageFiles,
-                                            onImagesChanged: (updatedImages) {
-                                              Navigator.pop(
-                                                context,
-                                                updatedImages,
-                                              );
-                                            },
-                                            maxImages: 1,
-                                          );
-                                        },
-                                      );
-
-                                  if (result != null) {
+                                  final pickedImage =
+                                      await CustomImageSelector.pickSingleImage();
+                                  if (pickedImage != null) {
                                     setState(() {
-                                      imageFiles = result;
+                                      imageFiles = [pickedImage];
                                     });
                                   }
                                 },
                               ),
                               ListTile(
-                                leading: const Icon(Icons.delete),
-                                title: const Text('Remove profile picture'),
-                                onTap: () {
+                                leading: const Icon(Icons.photo),
+                                title: const Text('Change profile picture'),
+                                onTap: () async {
                                   Navigator.pop(context);
-                                  // TODO: reset image
+                                  final pickedImage =
+                                      await CustomImageSelector.pickSingleImage();
+                                  if (pickedImage != null) {
+                                    setState(() {
+                                      imageFiles = [pickedImage];
+                                    });
+                                  }
                                 },
                               ),
                             ],
