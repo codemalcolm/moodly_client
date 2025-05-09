@@ -113,7 +113,6 @@ class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
               ),
             ),
             const SizedBox(height: 32),
-
             Align(
               alignment: Alignment.centerLeft,
               child: Text('Username', style: textTheme.titleMedium),
@@ -121,10 +120,9 @@ class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
             const SizedBox(height: 8),
             const CustomTextInput(
               hintText: 'Username',
-              initialValue: 'moodly_user',
+              initialValue: 'moodly_user', // TODO: show actual user data
             ),
             const SizedBox(height: 24),
-
             Align(
               alignment: Alignment.centerLeft,
               child: Text('Name & Last name', style: textTheme.titleMedium),

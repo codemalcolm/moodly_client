@@ -40,6 +40,8 @@ flutter:
    - assets/icons/icon_mood_tired.svg
    - assets/icons/icon_settings.svg
    - assets/icons/icon_settings_outlined.svg
+   - assets/images/moodly_speech.png
+   - assets/data/fasties.json
 
   fonts:
     - family: Montserrat

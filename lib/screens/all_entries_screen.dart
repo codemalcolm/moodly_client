@@ -5,6 +5,8 @@ class AllEntriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('All Entries', style: TextStyle(fontSize: 18)));
+    return Center(
+      child: Text('Journal (all entries)', style: TextStyle(fontSize: 18)),
+    );
   }
 }

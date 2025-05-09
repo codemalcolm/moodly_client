@@ -1,0 +1,58 @@
+[
+  {
+    "task": "Drink a glass of water",
+    "category": "hydration"
+  },
+  {
+    "task": "Go for a short walk",
+    "category": "physical"
+  },
+  {
+    "task": "Clean up your desk",
+    "category": "planning"
+  },
+  {
+    "task": "Prepare a healthy snack",
+    "category": "nutrition"
+  },
+  {
+    "task": "Stretch for 5 minutes",
+    "category": "physical"
+  },
+  {
+    "task": "Write down 3 priorities for today",
+    "category": "planning"
+  },
+  {
+    "task": "Do 20 sit-ups",
+    "category": "physical"
+  },
+  {
+    "task": "Take a deep breath and relax",
+    "category": "health"
+  },
+  {
+    "task": "Change your bed sheets",
+    "category": "health"
+  },
+  {
+    "task": "Listen to a good song with closed eyes",
+    "category": "pause"
+  },
+  {
+    "task": "Do 20 squats",
+    "category": "physical"
+  },
+  {
+    "task": "Do 10 push-ups",
+    "category": "physical"
+  },
+  {
+    "task": "Eat an apple outside",
+    "category": "stop smoking"
+  },
+  {
+    "task": "Do 15 jumping jacks",
+    "category": "physical"
+  }
+]
