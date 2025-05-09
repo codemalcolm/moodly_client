@@ -142,25 +142,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 24),
           const SectionDivider(label: 'Notifications'),
           const SizedBox(height: 14),
-          Text('Sound', style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Enable sound'),
+              Text('Sound', style: Theme.of(context).textTheme.titleMedium),
               Transform.scale(
                 scale: 0.8,
                 child: Switch(value: soundEnabled, onChanged: _updateSound),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Text('Vibration', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Enable vibration'),
+              Text('Vibration', style: Theme.of(context).textTheme.titleMedium),
               Transform.scale(
                 scale: 0.8,
                 child: Switch(
