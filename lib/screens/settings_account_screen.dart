@@ -76,16 +76,12 @@ class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
                               ),
                               ListTile(
                                 leading: const Icon(Icons.photo),
-                                title: const Text('Change profile picture'),
+                                title: const Text('Remove profile picture'),
                                 onTap: () async {
                                   Navigator.pop(context);
-                                  final pickedImage =
-                                      await CustomImageSelector.pickSingleImage();
-                                  if (pickedImage != null) {
-                                    setState(() {
-                                      imageFiles = [pickedImage];
-                                    });
-                                  }
+                                  setState(() {
+                                    imageFiles = [];
+                                  });
                                 },
                               ),
                             ],
