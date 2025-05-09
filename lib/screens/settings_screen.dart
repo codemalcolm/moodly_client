@@ -1,12 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:moodly_client/screens/services/notification_settings_service.dart';
 import 'package:moodly_client/theme/theme_notifier.dart';
 import 'package:moodly_client/widgets/section_divider.dart';
 import 'package:moodly_client/widgets/theme_mode_selector.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool soundEnabled = true;
+  bool vibrationEnabled = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final sound = await NotificationSettingsService.getSoundEnabled();
+    final vibration = await NotificationSettingsService.getVibrationEnabled();
+
+    setState(() {
+      soundEnabled = sound;
+      vibrationEnabled = vibration;
+    });
+  }
+
+  void _updateSound(bool value) async {
+    await NotificationSettingsService.setSoundEnabled(value);
+    setState(() {
+      soundEnabled = value;
+    });
+  }
+
+  void _updateVibration(bool value) async {
+    await NotificationSettingsService.setVibrationEnabled(value);
+    setState(() {
+      vibrationEnabled = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,9 +139,37 @@ class SettingsScreen extends StatelessWidget {
           Text('Theme mode', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           const ThemeModeSelector(),
-          // const SizedBox(height: 24),
-          // const SectionDivider(label: 'Notifications'),
-          // const SizedBox(height: 14),
+          const SizedBox(height: 24),
+          const SectionDivider(label: 'Notifications'),
+          const SizedBox(height: 14),
+          Text('Sound', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Enable sound'),
+              Transform.scale(
+                scale: 0.8,
+                child: Switch(value: soundEnabled, onChanged: _updateSound),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text('Vibration', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Enable vibration'),
+              Transform.scale(
+                scale: 0.8,
+                child: Switch(
+                  value: vibrationEnabled,
+                  onChanged: _updateVibration,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
