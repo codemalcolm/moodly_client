@@ -65,6 +65,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Theme.of(context).colorScheme.surface,
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.surface,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  stops: [0.45, 0.99, 1.0],
+                ),
                 color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [

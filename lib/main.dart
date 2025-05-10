@@ -33,9 +33,10 @@ class MyApp extends StatelessWidget {
       initialRoute: '/day-view',
       routes: {
         '/day-view': (context) => const AppScaffold(currentIndex: 0),
-        '/fasties': (context) => const AppScaffold(currentIndex: 1),
-        '/settings': (context) => const AppScaffold(currentIndex: 2),
-        '/new-entry': (context) => const AppScaffold(currentIndex: 3),
+        '/all-entries': (context) => const AppScaffold(currentIndex: 1),
+        '/new-entry': (context) => const AppScaffold(currentIndex: 2),
+        '/fasties': (context) => const AppScaffold(currentIndex: 3),
+        '/settings': (context) => const AppScaffold(currentIndex: 4),
         '/settings-account': (context) => const SettingsAccountScreen(),
         '/fasties-settings': (context) => const FastiesSettingsScreen(),
       },

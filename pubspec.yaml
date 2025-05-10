@@ -29,6 +29,8 @@ flutter:
    - assets/icons/moodly_icon_outlined.svg
    - assets/icons/icon_add.svg
    - assets/icons/icon_add_outlined.svg
+   - assets/icons/icon_all_entries.svg
+   - assets/icons/icon_all_entries_outlined.svg
    - assets/icons/icon_home.svg
    - assets/icons/icon_home_outlined.svg
    - assets/icons/icon_mood_angry.svg

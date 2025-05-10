@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moodly_client/screens/all_entries_screen.dart';
 import 'package:moodly_client/screens/fasties_screen.dart';
 import '../screens/day_view_screen.dart';
 import '../screens/new_entry_screen.dart';
@@ -11,23 +12,26 @@ class AppScaffold extends StatelessWidget {
 
   static final List<Widget> _pages = [
     DayViewScreen(),
+    AllEntriesScreen(),
+    NewEntryScreen(),
     FastiesScreen(),
     SettingsScreen(),
-    NewEntryScreen(),
   ];
 
   static final List<String> _routes = [
     '/day-view',
+    '/all-entries',
+    '/new-entry',
     '/fasties',
     '/settings',
-    '/new-entry',
   ];
 
   static final List<String> _titles = [
     'Home',
+    'Journal',
+    'New Entry',
     'Fasties',
     'Settings',
-    'New Entry',
   ];
 
   @override
@@ -64,6 +68,48 @@ class AppScaffold extends StatelessWidget {
               ),
             ),
             label: 'Home',
+          ),
+          NavigationDestination(
+            icon: SvgPicture.asset(
+              'assets/icons/icon_all_entries_outlined.svg',
+              width: 30,
+              height: 30,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.secondary,
+                BlendMode.srcIn,
+              ),
+            ),
+            selectedIcon: SvgPicture.asset(
+              'assets/icons/icon_all_entries.svg',
+              width: 30,
+              height: 30,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.primary,
+                BlendMode.srcIn,
+              ),
+            ),
+            label: 'Journal',
+          ),
+          NavigationDestination(
+            icon: SvgPicture.asset(
+              'assets/icons/icon_add_outlined.svg',
+              width: 30,
+              height: 30,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.secondary,
+                BlendMode.srcIn,
+              ),
+            ),
+            selectedIcon: SvgPicture.asset(
+              'assets/icons/icon_add.svg',
+              width: 30,
+              height: 30,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.primary,
+                BlendMode.srcIn,
+              ),
+            ),
+            label: 'Add Entry',
           ),
           NavigationDestination(
             icon: SvgPicture.asset(
@@ -106,27 +152,6 @@ class AppScaffold extends StatelessWidget {
               ),
             ),
             label: 'Settings',
-          ),
-          NavigationDestination(
-            icon: SvgPicture.asset(
-              'assets/icons/icon_add_outlined.svg',
-              width: 30,
-              height: 30,
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.secondary,
-                BlendMode.srcIn,
-              ),
-            ),
-            selectedIcon: SvgPicture.asset(
-              'assets/icons/icon_add.svg',
-              width: 30,
-              height: 30,
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.primary,
-                BlendMode.srcIn,
-              ),
-            ),
-            label: 'Add Entry',
           ),
         ],
       ),

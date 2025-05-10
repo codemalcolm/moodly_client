@@ -19,12 +19,12 @@ class DarkColors {
 }
 
 class AccentColors {
-  static const blue = Color(0xFF38D9A9);
-  static const red = Color(0xFF9775FA);
-  static const orange = Color(0xFFFFA94D);
-  static const green = Color(0xFFFFD43B);
-  static const yellow = Color(0xFFF783AC);
-  static const purple = Color(0xFF579AD1);
+  static const blue = Color(0xFF579AD1);
+  static const red = Color(0xFFF783AC);
+  static const orange = Color(0xFFE99234);
+  static const green = Color(0xFF249271);
+  static const yellow = Color(0xFFEFD126);
+  static const purple = Color(0xFF9775FA);
 }
 
 class AppTheme {
