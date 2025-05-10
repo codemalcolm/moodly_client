@@ -69,6 +69,40 @@ class _DayViewScreenState extends State<DayViewScreen> {
   bool _isLoadingDayEntry = false;
   String? _dayEntryError;
 
+  Future<void> createDayEntry(String formattedDate) async {
+    final uri = Uri.parse('http://10.0.2.2:5000/api/v1/days');
+    final Map<String, dynamic> requestBody = {
+      "dayEntryDate": formattedDate,
+      "mood": "unfilled",
+      "dailyTasks": [],
+      "journalEntries": [],
+    };
+
+    try {
+      final response = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(requestBody),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final jsonResponse = json.decode(response.body);
+        setState(() {
+          _dayEntry = DayEntry.fromJson(jsonResponse['dayEntry']);
+          _dayEntryError = null;
+        });
+      } else {
+        setState(() {
+          _dayEntryError = 'Failed to create new day entry.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _dayEntryError = 'Error creating new day entry: $e';
+      });
+    }
+  }
+
   Future<void> fetchDayEntry(DateTime date) async {
     setState(() {
       _isLoadingDayEntry = true;
@@ -94,14 +128,16 @@ class _DayViewScreenState extends State<DayViewScreen> {
             _dayEntryError = 'No data found for this day.';
           });
         }
-      } else if (json.decode(response.body)['errorName'] == 'CastError') {
-        setState(() {
-          _dayEntryError = 'Undefined date provided';
-        });
       } else {
-        setState(() {
-          _dayEntryError = 'Failed to fetch day entry.';
-        });
+        final errorJson = json.decode(response.body);
+        if (errorJson['errorName'] == 'CastError') {
+          setState(() {
+            _dayEntryError = 'Undefined date provided';
+          });
+        } else {
+          // Create new day entry if no CastError
+          await createDayEntry(formattedDate);
+        }
       }
     } catch (e) {
       setState(() {
