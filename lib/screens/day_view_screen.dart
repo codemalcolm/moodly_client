@@ -94,6 +94,10 @@ class _DayViewScreenState extends State<DayViewScreen> {
             _dayEntryError = 'No data found for this day.';
           });
         }
+      } else if (json.decode(response.body)['errorName'] == 'CastError') {
+        setState(() {
+          _dayEntryError = 'Undefined date provided';
+        });
       } else {
         setState(() {
           _dayEntryError = 'Failed to fetch day entry.';
@@ -181,49 +185,69 @@ class _DayViewScreenState extends State<DayViewScreen> {
             //   });
             // },
           ),
-          SizedBox(height: 16),
-          Text(
-            'Selected Date: ${DateFormat('EEE, MMM d, yyyy').format(_selectedDate)}',
-            style: const TextStyle(fontSize: 16),
-          ),
           Expanded(
-            child:
-                _isLoadingDayEntry
-                    ? const Center(child: CircularProgressIndicator())
-                    : _dayEntry != null
-                    ? ListView(
-                      padding: const EdgeInsets.all(16),
-                      children: [
-                        Text(
-                          'Mood: ${_dayEntry!.mood}',
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        const SizedBox(height: 10),
-                        if (_dayEntry!.journalEntries.isNotEmpty)
-                          ..._dayEntry!.journalEntries.map(
-                            (entry) => Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Container(
+              padding: EdgeInsets.only(
+                left: 24,
+                right: 24,
+                bottom: 16,
+                top: 16,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${DateFormat('EEEE, dd/MM/yyyy').format(_selectedDate)}',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Expanded(
+                    child:
+                        _isLoadingDayEntry
+                            ? const Center(child: CircularProgressIndicator())
+                            : _dayEntry != null
+                            ? ListView(
+                              padding: const EdgeInsets.all(16),
                               children: [
                                 Text(
-                                  'Name: ${entry.name}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  'Mood: ${_dayEntry!.mood}',
+                                  style: const TextStyle(fontSize: 16),
                                 ),
-                                Text('Text: ${entry.entryText}'),
                                 const SizedBox(height: 10),
+                                if (_dayEntry!.journalEntries.isNotEmpty)
+                                  ..._dayEntry!.journalEntries.map(
+                                    (entry) => Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Name: ${entry.name}',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text('Text: ${entry.entryText}'),
+                                        const SizedBox(height: 10),
+                                      ],
+                                    ),
+                                  )
+                                else
+                                  const Text(
+                                    'No journal entries for this day.',
+                                  ),
                               ],
+                            )
+                            : Center(
+                              child: Text(
+                                _dayEntryError ?? 'No data for selected day.',
+                              ),
                             ),
-                          )
-                        else
-                          const Text('No journal entries for this day.'),
-                      ],
-                    )
-                    : Center(
-                      child: Text(
-                        _dayEntryError ?? 'No data for selected day.',
-                      ),
-                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
