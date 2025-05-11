@@ -31,8 +31,10 @@ flutter:
    - assets/icons/icon_add_outlined.svg
    - assets/icons/icon_all_entries.svg
    - assets/icons/icon_all_entries_outlined.svg
+   - assets/icons/icon_fasties_settings.svg
    - assets/icons/icon_home.svg
    - assets/icons/icon_home_outlined.svg
+   - assets/icons/icon_info.svg
    - assets/icons/icon_mood_angry.svg
    - assets/icons/icon_mood_anxious.svg
    - assets/icons/icon_mood_good.svg

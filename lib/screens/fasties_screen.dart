@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FastiesScreen extends StatefulWidget {
@@ -164,8 +165,15 @@ class _FastiesScreenState extends State<FastiesScreen> {
                         ),
                   );
                 },
-                icon: const Icon(Icons.help_outline),
-                color: Colors.grey,
+                icon: SvgPicture.asset(
+                  'assets/icons/icon_info.svg',
+                  width: 30,
+                  height: 30,
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).colorScheme.secondary,
+                    BlendMode.srcIn,
+                  ),
+                ),
               ),
               IconButton(
                 onPressed: () async {
@@ -183,8 +191,15 @@ class _FastiesScreenState extends State<FastiesScreen> {
                     );
                   }
                 },
-                icon: const Icon(Icons.settings),
-                color: Colors.grey,
+                icon: SvgPicture.asset(
+                  'assets/icons/icon_fasties_settings.svg',
+                  width: 30,
+                  height: 30,
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).colorScheme.secondary,
+                    BlendMode.srcIn,
+                  ),
+                ),
               ),
             ],
           ),
