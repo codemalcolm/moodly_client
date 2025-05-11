@@ -1,12 +1,26 @@
 [
-  {"category": "hydration"},
-  {"category": "exercise"},
-  {"category": "health"},
-  {"category": "socializing"},
-  {"category": "crafts and art"},
-  {"category": "music"},
-  {"category": "creative writing"},
-  {"category": "nutrition"},
-  {"category": "better mood"},
-  {"category": "planning"}
+  {
+    "category": "hydration"
+  },
+  {
+    "category": "exercise"
+  },
+  {
+    "category": "creative writing"
+  },
+  {
+    "category": "nutrition"
+  },
+  {
+    "category": "better mood"
+  },
+  {
+    "category": "socializing"
+  },
+  {
+    "category": "crafts and art"
+  },
+  {
+    "category": "planning"
+  }
 ]

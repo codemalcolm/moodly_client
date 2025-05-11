@@ -1,23 +1,167 @@
 [
   {
-    "task": "Drink a glass of water",
+    "task": "Drink a glass of water.",
     "category": "hydration"
   },
   {
-    "task": "Go for a short walk",
-    "category": "physical"
+    "task": "Have a herbal tea.",
+    "category": "hydration"
   },
   {
-    "task": "Clean up your desk",
-    "category": "planning"
+    "task": "Add fruit to your water.",
+    "category": "hydration"
   },
   {
-    "task": "Prepare a healthy snack",
+    "task": "Set a hydration reminder.",
+    "category": "hydration"
+  },
+  {
+    "task": "Sip water slowly for 1 minute.",
+    "category": "hydration"
+  },
+  {
+    "task": "Drink coconut water.",
+    "category": "hydration"
+  },
+  {
+    "task": "Try a sparkling water.",
+    "category": "hydration"
+  },
+  {
+    "task": "Log your water intake.",
+    "category": "hydration"
+  },
+  {
+    "task": "Rinse your face with cool water.",
+    "category": "hydration"
+  },
+  {
+    "task": "Refill your water bottle.",
+    "category": "hydration"
+  },
+  {
+    "task": "Research hydration tips.",
+    "category": "hydration"
+  },
+  {
+    "task": "Keep a water bottle at your desk.",
+    "category": "hydration"
+  },
+  {
+    "task": "Encourage a friend to hydrate.",
+    "category": "hydration"
+  },
+  {
+    "task": "Try a new tea flavor.",
+    "category": "hydration"
+  },
+  {
+    "task": "Infuse water with mint.",
+    "category": "hydration"
+  },
+  {
+    "task": "Drink water before coffee.",
+    "category": "hydration"
+  },
+  {
+    "task": "Drink water after bathroom visit.",
+    "category": "hydration"
+  },
+  {
+    "task": "Drink water before a meal.",
+    "category": "hydration"
+  },
+  {
+    "task": "Go for a short walk.",
+    "category": "exercise"
+  },
+  {
+    "task": "Prepare a healthy snack.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Prepare a meal today without any ready-made products.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Research 3 healthy snacks and try one of them.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Write down what you ate today - honestly and without judgment.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Drink a large glass of water before your next meal.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Plan a healthy breakfast for tomorrow.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Read the ingredients list of a processed product - do you recognize everything?",
+    "category": "nutrition"
+  },
+  {
+    "task": "Try a new type of vegetable today.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Take a photo of your next healthy meal.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Replace a sweet drink with water or unsweetened tea today.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Prepare a colorful fruit salad.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Consciously eat slowly and mindfully today - without distractions.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Try to create a meal with all the colors of the rainbow.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Write a shopping list with only healthy foods.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Learn about the benefits of fiber - and eat more of it.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Try a new plant-based dish - whether vegetarian or vegan.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Read an article or blog post about healthy eating.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Observe how you feel after different meals.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Eat a handful of nuts or seeds as a snack today.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Take time to prepare your food beautifully.",
+    "category": "nutrition"
+  },
+  {
+    "task": "Research a healthy recipe and make it this week.",
     "category": "nutrition"
   },
   {
     "task": "Stretch for 5 minutes",
-    "category": "physical"
+    "category": "exercise"
   },
   {
     "task": "Write down 3 priorities for today",
@@ -25,7 +169,7 @@
   },
   {
     "task": "Do 20 sit-ups",
-    "category": "physical"
+    "category": "exercise"
   },
   {
     "task": "Take a deep breath and relax",
@@ -36,23 +180,559 @@
     "category": "health"
   },
   {
-    "task": "Listen to a good song with closed eyes",
-    "category": "pause"
-  },
-  {
     "task": "Do 20 squats",
-    "category": "physical"
+    "category": "exercise"
   },
   {
     "task": "Do 10 push-ups",
-    "category": "physical"
-  },
-  {
-    "task": "Eat an apple outside",
-    "category": "stop smoking"
+    "category": "exercise"
   },
   {
     "task": "Do 15 jumping jacks",
-    "category": "physical"
+    "category": "exercise"
+  },
+  {
+    "task": "Stretch your arms",
+    "category": "exercise"
+  },
+  {
+    "task": "Walk up and down stairs",
+    "category": "exercise"
+  },
+  {
+    "task": "Do 10 squats",
+    "category": "exercise"
+  },
+  {
+    "task": "Do 15 high knees",
+    "category": "exercise"
+  },
+  {
+    "task": "Dance for 1 minute",
+    "category": "exercise"
+  },
+  {
+    "task": "Do a wall sit for 45s",
+    "category": "exercise"
+  },
+  {
+    "task": "Balance on one leg for 60s",
+    "category": "exercise"
+  },
+  {
+    "task": "Roll your shoulders for 60s",
+    "category": "exercise"
+  },
+  {
+    "task": "Do 10 calf raises",
+    "category": "exercise"
+  },
+  {
+    "task": "Try a new yoga pose",
+    "category": "exercise"
+  },
+  {
+    "task": "Do 5 lunges (both sides)",
+    "category": "exercise"
+  },
+  {
+    "task": "Do 10 arm circles",
+    "category": "exercise"
+  },
+  {
+    "task": "Jump in place 10 times",
+    "category": "exercise"
+  },
+  {
+    "task": "Make a plank for 30 seconds",
+    "category": "exercise"
+  },
+  {
+    "task": "Do toe touches",
+    "category": "exercise"
+  },
+  {
+    "task": "Stretch your legs for 30s",
+    "category": "exercise"
+  },
+  {
+    "task": "Do 10 neck rolls",
+    "category": "exercise"
+  },
+  {
+    "task": "Write a mini story with exactly 3 sentences.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Describe a place you make up in as much detail as possible.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Write a scene from the perspective of an animal.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Make up an unusual holiday and describe how it is celebrated.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Invent a character with an unusual job and describe their daily routine.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Write a letter to your future self.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Turn a proverb into a short story.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Start a text with “Nobody thought it would end like this...”",
+    "category": "creative writing"
+  },
+  {
+    "task": "Describe a nightmare in poetic language.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Invent a fairy tale set in modern times.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Write a scene without dialog, just thoughts and descriptions.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Have two characters discuss something trivial in an argument.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Invent a magical object and describe its effect.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Write an inner monologue of a character who has a secret.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Find ten different ways in which a story could begin with “Once upon a time...”.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Write an advertisement for a completely useless product.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Describe a moment of silence in a way that creates tension.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Create a fictional diary entry from the year 2125.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Write a story backwards - from the end to the beginning.",
+    "category": "creative writing"
+  },
+  {
+    "task": "Write down 3 things you're grateful for today.",
+    "category": "better mood"
+  },
+  {
+    "task": "Compliment yourself in the mirror.",
+    "category": "better mood"
+  },
+  {
+    "task": "Watch a funny video or meme.",
+    "category": "better mood"
+  },
+  {
+    "task": "Dance to your favorite upbeat song - even just for 1 minute.",
+    "category": "better mood"
+  },
+  {
+    "task": "Text a friend and tell them something nice.",
+    "category": "better mood"
+  },
+  {
+    "task": "Step outside and take 10 deep breaths.",
+    "category": "better mood"
+  },
+  {
+    "task": "Think of a positive memory and relive it for a moment.",
+    "category": "better mood"
+  },
+  {
+    "task": "Smile at yourself in the mirror for 30 seconds.",
+    "category": "better mood"
+  },
+  {
+    "task": "Light a candle or incense you like.",
+    "category": "better mood"
+  },
+  {
+    "task": "List 5 things that are going well, no matter how small.",
+    "category": "better mood"
+  },
+  {
+    "task": "Hug yourself like you mean it.",
+    "category": "better mood"
+  },
+  {
+    "task": "Do a silly pose and hold it - embrace the ridiculousness.",
+    "category": "better mood"
+  },
+  {
+    "task": "Say something kind out loud, even if it's just to your plant or pet.",
+    "category": "better mood"
+  },
+  {
+    "task": "Look at an old photo that makes you smile.",
+    "category": "better mood"
+  },
+  {
+    "task": "Do something playful: doodle, hum, skip, or spin in your chair.",
+    "category": "better mood"
+  },
+  {
+    "task": "Imagine a place where you feel safe and happy - go there in your mind.",
+    "category": "better mood"
+  },
+  {
+    "task": "Change into your comfiest clothes.",
+    "category": "better mood"
+  },
+  {
+    "task": "Try a 1-minute laughter meditation (yes, fake laughing counts!).",
+    "category": "better mood"
+  },
+  {
+    "task": "Look at the sky and notice its colors.",
+    "category": "better mood"
+  },
+  {
+    "task": "Make a list of people, places, or things that bring you joy.",
+    "category": "better mood"
+  },
+  {
+    "task": "Send a “just checking in” message to someone you haven't talked to in a while.",
+    "category": "socializing"
+  },
+  {
+    "task": "Ask a coworker, classmate, or neighbor how their day is going.",
+    "category": "socializing"
+  },
+  {
+    "task": "Compliment someone sincerely. Their outfit, idea, or energy.",
+    "category": "socializing"
+  },
+  {
+    "task": "Join a group chat or forum that matches one of your interests.",
+    "category": "socializing"
+  },
+  {
+    "task": "Smile and make eye contact with someone today.",
+    "category": "socializing"
+  },
+  {
+    "task": "Share a funny meme or video with a friend.",
+    "category": "socializing"
+  },
+  {
+    "task": "Comment something kind on someone's social media post.",
+    "category": "socializing"
+  },
+  {
+    "task": "Invite someone for a short walk or a coffee. even if it's virtual.",
+    "category": "socializing"
+  },
+  {
+    "task": "Ask someone about a hobby or interest they've mentioned before.",
+    "category": "socializing"
+  },
+  {
+    "task": "Write a letter or postcard to a friend or family member.",
+    "category": "socializing"
+  },
+  {
+    "task": "Join a local group or online community (book club, game night, etc.).",
+    "category": "socializing"
+  },
+  {
+    "task": "Offer help or ask for help with something small.",
+    "category": "socializing"
+  },
+  {
+    "task": "Share a recommendation (book, movie, podcast) with someone.",
+    "category": "socializing"
+  },
+  {
+    "task": "Try saying “yes” to a social invite you'd normally hesitate on.",
+    "category": "socializing"
+  },
+  {
+    "task": "Attend a free local event and try to start one small conversation.",
+    "category": "socializing"
+  },
+  {
+    "task": "Reconnect with an old friend, even just to say hi.",
+    "category": "socializing"
+  },
+  {
+    "task": "Share something personal but light, like your favorite snack or song lately.",
+    "category": "socializing"
+  },
+  {
+    "task": "Ask a friend to tell you one thing that made them smile today.",
+    "category": "socializing"
+  },
+  {
+    "task": "Practice active listening in your next conversation, focus fully on the other person.",
+    "category": "socializing"
+  },
+  {
+    "task": "Tell someone that you appreciate them.",
+    "category": "socializing"
+  },
+  {
+    "task": "Doodle something random for 5 minutes.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Pick 3 colors and create a mini abstract sketch.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Fold an origami animal using a YouTube tutorial.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Make a postcard out of scrap paper or an old magazine.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Try drawing your mood without using words.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Decorate a sticky note with a tiny drawing or pattern.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Paint or color in a coloring book.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Design your initials in a creative font.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Take a photo of something beautiful around you.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Make a collage from paper scraps or digital images.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Create a mood board on Pinterest.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Write your name in 3 different styles.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Try making a simple bracelet or keychain.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Sketch your favorite object on your desk.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Reuse something old to make something new.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Draw with your non-dominant hand.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Illustrate a simple quote you like.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Use stickers or washi tape to decorate a notebook.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Trace your hand and fill it with doodles.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Make a quick flipbook using sticky notes.",
+    "category": "crafts and art"
+  },
+  {
+    "task": "Write down 3 things you want to get done today.",
+    "category": "planning"
+  },
+  {
+    "task": "Make a to-do list for tomorrow.",
+    "category": "planning"
+  },
+  {
+    "task": "Set one small goal for the week.",
+    "category": "planning"
+  },
+  {
+    "task": "Review your calendar and note any upcoming events.",
+    "category": "planning"
+  },
+  {
+    "task": "Organize your day into 3 simple time blocks.",
+    "category": "planning"
+  },
+  {
+    "task": "Plan your next meal or grocery list.",
+    "category": "planning"
+  },
+  {
+    "task": "Identify one task you can delegate or delay.",
+    "category": "planning"
+  },
+  {
+    "task": "Set a 10-minute timer and plan as much as you can.",
+    "category": "planning"
+  },
+  {
+    "task": "Reflect on your top 3 priorities.",
+    "category": "planning"
+  },
+  {
+    "task": "Make a short list of what's been stressing you.",
+    "category": "planning"
+  },
+  {
+    "task": "Brain dump everything on your mind.",
+    "category": "planning"
+  },
+  {
+    "task": "Highlight one thing to focus on today.",
+    "category": "planning"
+  },
+  {
+    "task": "Write a checklist for your morning routine.",
+    "category": "planning"
+  },
+  {
+    "task": "Break a big task into 3 smaller steps.",
+    "category": "planning"
+  },
+  {
+    "task": "Review or create a budget snapshot.",
+    "category": "planning"
+  },
+  {
+    "task": "Plan a fun activity for the weekend.",
+    "category": "planning"
+  },
+  {
+    "task": "Create a list of your most-used apps or tools.",
+    "category": "planning"
+  },
+  {
+    "task": "Declutter your to-do list - remove what's no longer important.",
+    "category": "planning"
+  },
+  {
+    "task": "Color-code your tasks or calendar.",
+    "category": "planning"
+  },
+  {
+    "task": "Choose one habit to track this week.",
+    "category": "planning"
+  },
+  {
+    "task": "Clear off one small surface (desk, shelf, counter).",
+    "category": "clean up"
+  },
+  {
+    "task": "Put away 5 items that are out of place.",
+    "category": "clean up"
+  },
+  {
+    "task": "Empty your trash bin or recycling.",
+    "category": "clean up"
+  },
+  {
+    "task": "Wipe your phone screen and keyboard.",
+    "category": "clean up"
+  },
+  {
+    "task": "Sort through one drawer or box.",
+    "category": "clean up"
+  },
+  {
+    "task": "Throw out expired food or snacks.",
+    "category": "clean up"
+  },
+  {
+    "task": "Organize your desktop or phone home screen.",
+    "category": "clean up"
+  },
+  {
+    "task": "Delete 10 unused apps or files.",
+    "category": "clean up"
+  },
+  {
+    "task": "Wash one dish (or start the dishwasher).",
+    "category": "clean up"
+  },
+  {
+    "task": "Clean a mirror or window.",
+    "category": "clean up"
+  },
+  {
+    "task": "Fold and put away your laundry.",
+    "category": "clean up"
+  },
+  {
+    "task": "Sweep or vacuum one room.",
+    "category": "clean up"
+  },
+  {
+    "task": "Reset your bed - fluff pillows or smooth the blanket.",
+    "category": "clean up"
+  },
+  {
+    "task": "Wipe down your bathroom sink.",
+    "category": "clean up"
+  },
+  {
+    "task": "Dust one shelf or corner.",
+    "category": "clean up"
+  },
+  {
+    "task": "Clean out your bag or backpack.",
+    "category": "clean up"
+  },
+  {
+    "task": "Tidy your nightstand or bedside area.",
+    "category": "clean up"
+  },
+  {
+    "task": "Gather dirty laundry in one place.",
+    "category": "clean up"
+  },
+  {
+    "task": "Refresh your workspace with a quick reset.",
+    "category": "clean up"
+  },
+  {
+    "task": "Spend 5 minutes decluttering - whatever's in front of you.",
+    "category": "clean up"
   }
 ]
