@@ -5,12 +5,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:moodly_client/widgets/custom_button.dart';
 import 'package:moodly_client/widgets/custom_image_selector.dart';
 import 'package:moodly_client/widgets/date_time_picker.dart';
+import 'package:moodly_client/widgets/journal_entry_textfield.dart';
 import 'package:moodly_client/widgets/moods_card.dart';
 import 'package:intl/intl.dart';
 
 class NewEntryScreen extends StatefulWidget {
   const NewEntryScreen({super.key});
-
   @override
   State<NewEntryScreen> createState() => _NewEntryScreenState();
 }
@@ -20,7 +20,6 @@ DateTime selectedDateTime = DateTime.now();
 class _NewEntryScreenState extends State<NewEntryScreen> {
   int? selectedMoodIndex;
   bool showMoodSelector = true;
-
   List<File> imageFiles = [];
   final imagePicker = ImagePicker();
 
@@ -61,6 +60,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
@@ -136,13 +136,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
               ],
             ),
           const SizedBox(height: 24),
-          TextField(
-            decoration: const InputDecoration(
-              labelText: 'What is on your mind?',
-              border: OutlineInputBorder(),
-            ),
-            maxLines: 5,
-          ),
+          const JournalEntryTextField(hintText: 'What is on your mind?'),
           const SizedBox(height: 24),
           Text(
             'Add images (${imageFiles.length}/5)',

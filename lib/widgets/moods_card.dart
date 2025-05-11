@@ -22,6 +22,17 @@ class MoodsCard extends StatelessWidget {
     'assets/icons/icon_mood_anxious.svg',
   ];
 
+  static List<Color> moodColors = [
+    const Color.fromARGB(138, 207, 32, 88),
+    const Color.fromARGB(138, 255, 117, 126),
+    const Color.fromARGB(139, 0, 150, 135),
+    const Color.fromARGB(138, 161, 27, 185),
+    const Color.fromARGB(138, 255, 134, 41),
+    const Color.fromARGB(137, 29, 18, 181),
+    const Color.fromARGB(136, 73, 226, 42),
+    const Color.fromARGB(137, 61, 38, 120),
+  ];
+
   const MoodsCard({
     super.key,
     required this.selectedMoodIndex,
@@ -31,7 +42,6 @@ class MoodsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(10),
@@ -48,15 +58,16 @@ class MoodsCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text('How do you feel?', style: theme.textTheme.titleMedium),
+          Text('How is your mood today?', style: theme.textTheme.bodyMedium),
           const SizedBox(height: 10),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
-              crossAxisSpacing: 2,
-              mainAxisSpacing: 2,
+              mainAxisSpacing: 16,
+              childAspectRatio: 1,
+              mainAxisExtent: 60,
             ),
             itemCount: moods.length,
             itemBuilder: (context, index) {
@@ -66,6 +77,7 @@ class MoodsCard extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
+                    color: moodColors[index],
                     shape: BoxShape.circle,
                     border: Border.all(
                       color:
@@ -88,6 +100,7 @@ class MoodsCard extends StatelessWidget {
               );
             },
           ),
+          SizedBox(height: 5),
         ],
       ),
     );
