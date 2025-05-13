@@ -35,55 +35,48 @@ class CalendarTab extends StatelessWidget {
     final year = DateFormat('yyyy').format(selectedDate);
 
     return Container(
+      padding: const EdgeInsets.only(left: 18, right: 18, top: 8),
       decoration: BoxDecoration(color: theme.colorScheme.surface),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
-            child: Container(
-              child: GestureDetector(
-                onTap: () async {
-                  final result = await Navigator.push<DateTime>(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (_) =>
-                              CalendarOverviewPage(initialDate: selectedDate),
-                    ),
-                  );
-                  if (result != null) {
-                    onDateSelected(result);
-                  }
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      month,
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Text(
-                        year,
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.secondary,
-                        ),
-                      ),
-                    ),
-                  ],
+          GestureDetector(
+            onTap: () async {
+              final result = await Navigator.push<DateTime>(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (_) => CalendarOverviewPage(initialDate: selectedDate),
                 ),
-              ),
+              );
+              if (result != null) {
+                onDateSelected(result);
+              }
+            },
+            child: Row(
+              children: [
+                Text(
+                  month,
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  year,
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.secondary,
+                  ),
+                ),
+              ],
             ),
           ),
+
           SizedBox(
-            height: 60,
+            height: 80,
             child: PageView.builder(
               controller: pageController,
               onPageChanged: onPageChanged,
@@ -94,7 +87,7 @@ class CalendarTab extends StatelessWidget {
                 final weekDates = _getWeekDates(weekStart);
 
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: const EdgeInsets.only(top: 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children:
@@ -110,12 +103,12 @@ class CalendarTab extends StatelessWidget {
                               children: [
                                 Text(
                                   DateFormat.E().format(date),
-                                  style: const TextStyle(fontSize: 14),
+                                  style: const TextStyle(fontSize: 18),
                                 ),
                                 const SizedBox(height: 4),
-                                Container(
-                                  width: 24,
-                                  height: 24,
+                                SizedBox(
+                                  width: 32,
+                                  height: 32,
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [
@@ -125,8 +118,8 @@ class CalendarTab extends StatelessWidget {
                                       ),
                                       if (isSelected)
                                         Container(
-                                          width: 22,
-                                          height: 22,
+                                          width: 28,
+                                          height: 28,
                                           decoration: BoxDecoration(
                                             color: theme.colorScheme.primary
                                                 .withAlpha(90),
