@@ -8,10 +8,7 @@ import 'package:moodly_client/widgets/custom_button.dart';
 class CalendarOverviewPage extends StatefulWidget {
   final DateTime initialDate;
 
-  const CalendarOverviewPage({
-    super.key,
-    required this.initialDate,
-  });
+  const CalendarOverviewPage({super.key, required this.initialDate});
 
   @override
   State<CalendarOverviewPage> createState() => _CalendarOverviewPageState();
@@ -53,26 +50,31 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
       final date = DateTime(_displayedMonth.year, _displayedMonth.month, day);
       final isSelected =
           _selectedDate != null && _selectedDate!.isAtSameMomentAs(date);
-
       return GestureDetector(
         onTap: () => setState(() => _selectedDate = date),
-        child: Container(
-          alignment: Alignment.center,
-          decoration:
-              isSelected
-                  ? BoxDecoration(
+        child: Center(
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              if (isSelected)
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(
                     color: Theme.of(
                       context,
                     ).colorScheme.primary.withOpacity(0.3),
                     shape: BoxShape.circle,
-                  )
-                  : null,
-          child: Text(
-            day.toString(),
-            style: TextStyle(
-              color: Theme.of(context).textTheme.bodyLarge!.color,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            ),
+                  ),
+                ),
+              Text(
+                day.toString(),
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyLarge!.color,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ],
           ),
         ),
       );
