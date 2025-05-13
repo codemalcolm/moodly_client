@@ -17,7 +17,7 @@ class CalendarOverviewPage extends StatefulWidget {
 class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
   late DateTime _displayedMonth;
   DateTime? _selectedDate;
-  late bool _monthYearPickerShowing;
+  late bool _monthYearPickerShowing = false;
 
   @override
   void initState() {
@@ -82,12 +82,13 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
   }
 
   void _showMonthYearPicker() async {
+    final theme = Theme.of(context);
     int selectedYear = _displayedMonth.year;
     int selectedMonth = _displayedMonth.month;
 
     // Mark picker as showing
     setState(() {
-      _monthYearPickerShowing = true;
+      _monthYearPickerShowing = !_monthYearPickerShowing;
     });
 
     await showModalBottomSheet(
@@ -101,6 +102,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
             children: [
               Expanded(
                 child: CupertinoPicker(
+                  backgroundColor: theme.colorScheme.surface,
                   scrollController: FixedExtentScrollController(
                     initialItem: selectedMonth - 1,
                   ),
@@ -120,6 +122,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
               ),
               Expanded(
                 child: CupertinoPicker(
+                  backgroundColor: theme.colorScheme.surface,
                   scrollController: FixedExtentScrollController(
                     initialItem: selectedYear - 2020,
                   ),
@@ -141,7 +144,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
 
     // Picker was dismissed
     setState(() {
-      _monthYearPickerShowing = false;
+      _monthYearPickerShowing = !_monthYearPickerShowing;
       _displayedMonth = DateTime(selectedYear, selectedMonth);
     });
   }
@@ -155,46 +158,41 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
         title: const Text("Calendar"),
         leading: const BackButton(),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 12,
-              bottom: 12,
-              left: 24,
-              right: 24,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                GestureDetector(
-                  onTap: _showMonthYearPicker,
-                  child: Row(
-                    children: [
-                      Text(
-                        monthYear,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+      body: Padding(
+        padding: EdgeInsets.fromLTRB(18, 12, 18, 12),
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.only(bottom: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: _showMonthYearPicker,
+                    child: Row(
+                      children: [
+                        Text(
+                          monthYear,
+                          style: const TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        _monthYearPickerShowing
-                            ? Icons.chevron_right
-                            : Icons.expand_more,
-                      ),
-                    ],
+                        const SizedBox(width: 4),
+                        Icon(
+                          !_monthYearPickerShowing
+                              ? Icons.chevron_right
+                              : Icons.expand_more,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
 
-          // Weekday Headers
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Row(
+            // Weekday Headers
+            Row(
               children:
                   ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
                       .map(
@@ -203,7 +201,8 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
                             child: Text(
                               day,
                               style: const TextStyle(
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 18,
                               ),
                             ),
                           ),
@@ -211,40 +210,36 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
                       )
                       .toList(),
             ),
-          ),
 
-          // Calendar Grid
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: GridView.count(
+            // Calendar Grid
+            GridView.count(
               shrinkWrap: true,
               crossAxisCount: 7,
-              crossAxisSpacing: 4,
-              mainAxisSpacing: 4,
+              crossAxisSpacing: 1,
+              mainAxisSpacing: 1,
               children: _buildCalendarGrid(),
             ),
-          ),
 
-          if (_selectedDate != null)
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    DateFormat('EEEE, MMMM d, yyyy').format(_selectedDate!),
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const Text("Data about day displayed here"),
-                  const SizedBox(height: 220),
-                  CustomButton(
-                    onPressed: () => Navigator.pop(context, _selectedDate),
-                    label: 'View Details',
-                  ),
-                ],
+            if (_selectedDate != null)
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      DateFormat('EEEE, MMMM d, yyyy').format(_selectedDate!),
+                      style: const TextStyle(fontSize: 17),
+                    ),
+                    const Text("Data about day displayed here"),
+                    const SizedBox(height: 280),
+                    CustomButton(
+                      onPressed: () => Navigator.pop(context, _selectedDate),
+                      label: 'View Details',
+                    ),
+                  ],
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
