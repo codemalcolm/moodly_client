@@ -338,20 +338,53 @@ class _DayViewScreenState extends State<DayViewScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Daily tasks",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: theme.colorScheme.secondary,
-                                ),
-                              ),
-                              Container(height: 250, color: Colors.grey),
-                            ],
-                          ),
+                          child:
+                              _isLoadingDayEntry
+                                  ? const Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                  : _dayEntry != null
+                                  ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Daily tasks",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                          color: theme.colorScheme.secondary,
+                                        ),
+                                      ),
+                                      if (_dayEntry!.dailyTasks.isNotEmpty)
+                                        ..._dayEntry!.dailyTasks.map(
+                                          (entry) => Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Name: ${entry.name}',
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text('Text: ${entry.isDone}'),
+                                              const SizedBox(height: 10),
+                                            ],
+                                          ),
+                                        )
+                                      else
+                                        const Text(
+                                          'No daily tasks for this day.',
+                                        ),
+                                    ],
+                                  )
+                                  : Center(
+                                    child: Text(
+                                      _dayEntryError ??
+                                          'No data for selected day.',
+                                    ),
+                                  ),
                         ),
                         if (_dayEntry != null &&
                             selectedMoodIndex != null &&
@@ -403,7 +436,7 @@ class _DayViewScreenState extends State<DayViewScreen> {
                       ],
                     ),
                   ),
-
+                  SizedBox(height: 16,),
                   Expanded(
                     child:
                         _isLoadingDayEntry
@@ -412,10 +445,13 @@ class _DayViewScreenState extends State<DayViewScreen> {
                             ? ListView(
                               children: [
                                 Text(
-                                  'Mood: ${_dayEntry!.mood}',
-                                  style: const TextStyle(fontSize: 16),
+                                  "Daily tasks",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: theme.colorScheme.secondary,
+                                  ),
                                 ),
-
                                 const SizedBox(height: 10),
                                 if (_dayEntry!.journalEntries.isNotEmpty)
                                   ..._dayEntry!.journalEntries.map(
@@ -430,27 +466,6 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                           ),
                                         ),
                                         Text('Text: ${entry.entryText}'),
-                                        const SizedBox(height: 10),
-                                      ],
-                                    ),
-                                  )
-                                else
-                                  const Text(
-                                    'No journal entries for this day.',
-                                  ),
-                                if (_dayEntry!.dailyTasks.isNotEmpty)
-                                  ..._dayEntry!.dailyTasks.map(
-                                    (entry) => Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Name: ${entry.name}',
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text('Text: ${entry.isDone}'),
                                         const SizedBox(height: 10),
                                       ],
                                     ),
