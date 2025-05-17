@@ -166,6 +166,27 @@ class _DayViewScreenState extends State<DayViewScreen> {
     }
   }
 
+  Future<void> updateMood(int moodIndex) async {
+    final uri = Uri.parse('http://10.0.2.2:5000/api/v1/days/${_dayEntry!.id}');
+    final Map<String, dynamic> requestBody = {"mood": moodIndex.toString()};
+
+    try {
+      final response = await http.patch(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(requestBody),
+      );
+
+      if (response.statusCode != 200) {
+        _dayEntryError = "Failed to update mood:";
+      }
+    } catch (e) {
+      setState(() {
+        _dayEntryError = "Error updating mood: $e";
+      });
+    }
+  }
+
   final PageController _pageController = PageController(initialPage: 0);
   final DateTime _baseDate = DateTime.now();
   DateTime _selectedDate = DateTime.now();
@@ -264,10 +285,24 @@ class _DayViewScreenState extends State<DayViewScreen> {
                       children: [
                         MoodsCard(
                           selectedMoodIndex: selectedMoodIndex,
-                          onMoodSelected: (index) {
+                          onMoodSelected: (index) async {
                             setState(() {
                               selectedMoodIndex = index;
                               showMoodSelector = false;
+                            });
+
+                            await updateMood(index);
+
+                            setState(() {
+                              // Update the local _dayEntry object with new mood
+                              if (_dayEntry != null) {
+                                _dayEntry = DayEntry(
+                                  id: _dayEntry!.id,
+                                  dayEntryDate: _dayEntry!.dayEntryDate,
+                                  mood: index,
+                                  journalEntries: _dayEntry!.journalEntries,
+                                );
+                              }
                             });
                           },
                         ),
