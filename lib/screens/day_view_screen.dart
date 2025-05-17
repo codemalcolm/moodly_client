@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'package:flutter_svg/svg.dart';
 import 'package:moodly_client/widgets/calendar_tab.dart';
+import 'package:moodly_client/widgets/moods_card.dart';
 
 class JournalEntry {
   final String id;
@@ -64,6 +65,8 @@ class DayViewScreen extends StatefulWidget {
 class _DayViewScreenState extends State<DayViewScreen> {
   final String backendUrl = 'http://10.0.2.2:5000/api/v1/entries';
   late Future<String> _messageFuture;
+  int? selectedMoodIndex;
+  bool showMoodSelector = true;
 
   DayEntry? _dayEntry;
   bool _isLoadingDayEntry = false;
@@ -232,20 +235,107 @@ class _DayViewScreenState extends State<DayViewScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '${DateFormat('EEEE, dd/MM/yyyy').format(_selectedDate)}',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 16),
+                    child: Text(
+                      '${DateFormat('EEEE, dd/MM/yyyy').format(_selectedDate)}',
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
+                  if (selectedMoodIndex == null || showMoodSelector)
+                    Column(
+                      children: [
+                        MoodsCard(
+                          selectedMoodIndex: selectedMoodIndex,
+                          onMoodSelected: (index) {
+                            setState(() {
+                              selectedMoodIndex = index;
+                              showMoodSelector = false;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Daily tasks",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: theme.colorScheme.secondary,
+                                ),
+                              ),
+                              Container(height: 250, color: Colors.grey),
+                            ],
+                          ),
+                        ),
+                        if (selectedMoodIndex != null && !showMoodSelector)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                "Today's mood",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: theme.colorScheme.secondary,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap:
+                                    () =>
+                                        setState(() => showMoodSelector = true),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: theme.colorScheme.surface,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black26,
+                                          blurRadius: 4,
+                                          offset: Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: SvgPicture.asset(
+                                      MoodsCard.moods[selectedMoodIndex!],
+                                      width: 48,
+                                      height: 48,
+                                      colorFilter: ColorFilter.mode(
+                                        theme.colorScheme.primary,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
+
                   Expanded(
                     child:
                         _isLoadingDayEntry
                             ? const Center(child: CircularProgressIndicator())
                             : _dayEntry != null
                             ? ListView(
-                              padding: const EdgeInsets.all(16),
                               children: [
                                 Text(
                                   'Mood: ${_dayEntry!.mood}',
