@@ -1,9 +1,12 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'package:flutter_svg/svg.dart';
 import 'package:moodly_client/widgets/calendar_tab.dart';
+import 'package:moodly_client/widgets/moods_card.dart';
 
 class JournalEntry {
   final String id;
@@ -28,17 +31,35 @@ class JournalEntry {
   }
 }
 
+class DailyTask {
+  final String id;
+  final String name;
+  final bool isDone;
+
+  DailyTask({required this.id, required this.name, required this.isDone});
+
+  factory DailyTask.fromJson(Map<String, dynamic> json) {
+    return DailyTask(
+      id: json['_id'],
+      name: json['name'],
+      isDone: json['isDone'],
+    );
+  }
+}
+
 class DayEntry {
   final String id;
   final String dayEntryDate;
-  final String mood;
+  final int? mood;
   final List<JournalEntry> journalEntries;
+  final List<DailyTask> dailyTasks;
 
   DayEntry({
     required this.id,
     required this.dayEntryDate,
     required this.mood,
     required this.journalEntries,
+    required this.dailyTasks,
   });
 
   factory DayEntry.fromJson(Map<String, dynamic> json) {
@@ -49,6 +70,10 @@ class DayEntry {
       journalEntries:
           (json['journalEntries'] as List<dynamic>)
               .map((e) => JournalEntry.fromJson(e))
+              .toList(),
+      dailyTasks:
+          (json['dailyTasks'] as List<dynamic>)
+              .map((e) => DailyTask.fromJson(e))
               .toList(),
     );
   }
@@ -64,6 +89,8 @@ class DayViewScreen extends StatefulWidget {
 class _DayViewScreenState extends State<DayViewScreen> {
   final String backendUrl = 'http://10.0.2.2:5000/api/v1/entries';
   late Future<String> _messageFuture;
+  int? selectedMoodIndex;
+  bool showMoodSelector = true;
 
   DayEntry? _dayEntry;
   bool _isLoadingDayEntry = false;
@@ -73,7 +100,7 @@ class _DayViewScreenState extends State<DayViewScreen> {
     final uri = Uri.parse('http://10.0.2.2:5000/api/v1/days');
     final Map<String, dynamic> requestBody = {
       "dayEntryDate": formattedDate,
-      "mood": "unfilled",
+      "mood": -1,
       "dailyTasks": [],
       "journalEntries": [],
     };
@@ -122,6 +149,17 @@ class _DayViewScreenState extends State<DayViewScreen> {
         if (jsonResponse['dayEntry'] != null) {
           setState(() {
             _dayEntry = DayEntry.fromJson(jsonResponse['dayEntry']);
+            if (_dayEntry!.mood != -1) {
+              setState(() {
+                selectedMoodIndex = _dayEntry!.mood;
+                showMoodSelector = false;
+              });
+            } else {
+              setState(() {
+                selectedMoodIndex = null;
+                showMoodSelector = true;
+              });
+            }
           });
         } else {
           setState(() {
@@ -146,6 +184,27 @@ class _DayViewScreenState extends State<DayViewScreen> {
     } finally {
       setState(() {
         _isLoadingDayEntry = false;
+      });
+    }
+  }
+
+  Future<void> updateMood(int moodIndex) async {
+    final uri = Uri.parse('http://10.0.2.2:5000/api/v1/days/${_dayEntry!.id}');
+    final Map<String, dynamic> requestBody = {"mood": moodIndex.toString()};
+
+    try {
+      final response = await http.patch(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(requestBody),
+      );
+
+      if (response.statusCode != 200) {
+        _dayEntryError = "Failed to update mood:";
+      }
+    } catch (e) {
+      setState(() {
+        _dayEntryError = "Error updating mood: $e";
       });
     }
   }
@@ -232,24 +291,166 @@ class _DayViewScreenState extends State<DayViewScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '${DateFormat('EEEE, dd/MM/yyyy').format(_selectedDate)}',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 16),
+                    child: Text(
+                      '${DateFormat('EEEE, dd/MM/yyyy').format(_selectedDate)}',
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
+                  if (_dayEntry != null &&
+                      (selectedMoodIndex == null || showMoodSelector))
+                    Column(
+                      children: [
+                        MoodsCard(
+                          selectedMoodIndex: selectedMoodIndex,
+                          onMoodSelected: (index) async {
+                            setState(() {
+                              selectedMoodIndex = index;
+                              showMoodSelector = false;
+                            });
+
+                            await updateMood(index);
+
+                            setState(() {
+                              // Update the local _dayEntry object with new mood
+                              if (_dayEntry != null) {
+                                _dayEntry = DayEntry(
+                                  id: _dayEntry!.id,
+                                  dayEntryDate: _dayEntry!.dayEntryDate,
+                                  mood: index,
+                                  journalEntries: _dayEntry!.journalEntries,
+                                  dailyTasks: _dayEntry!.dailyTasks,
+                                );
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child:
+                              _isLoadingDayEntry
+                                  ? const Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                  : _dayEntry != null
+                                  ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Daily tasks",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                          color: theme.colorScheme.secondary,
+                                        ),
+                                      ),
+                                      if (_dayEntry!.dailyTasks.isNotEmpty)
+                                        ..._dayEntry!.dailyTasks.map(
+                                          (entry) => Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Name: ${entry.name}',
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text('Text: ${entry.isDone}'),
+                                              const SizedBox(height: 10),
+                                            ],
+                                          ),
+                                        )
+                                      else
+                                        const Text(
+                                          'No daily tasks for this day.',
+                                        ),
+                                    ],
+                                  )
+                                  : Center(
+                                    child: Text(
+                                      _dayEntryError ??
+                                          'No data for selected day.',
+                                    ),
+                                  ),
+                        ),
+                        if (_dayEntry != null &&
+                            selectedMoodIndex != null &&
+                            !showMoodSelector)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                "Today's mood",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: theme.colorScheme.secondary,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap:
+                                    () =>
+                                        setState(() => showMoodSelector = true),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: theme.colorScheme.surface,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black26,
+                                          blurRadius: 4,
+                                          offset: Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: SvgPicture.asset(
+                                      MoodsCard.moods[selectedMoodIndex!],
+                                      width: 48,
+                                      height: 48,
+                                      colorFilter: ColorFilter.mode(
+                                        theme.colorScheme.primary,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 16,),
                   Expanded(
                     child:
                         _isLoadingDayEntry
                             ? const Center(child: CircularProgressIndicator())
                             : _dayEntry != null
                             ? ListView(
-                              padding: const EdgeInsets.all(16),
                               children: [
                                 Text(
-                                  'Mood: ${_dayEntry!.mood}',
-                                  style: const TextStyle(fontSize: 16),
+                                  "Daily tasks",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: theme.colorScheme.secondary,
+                                  ),
                                 ),
                                 const SizedBox(height: 10),
                                 if (_dayEntry!.journalEntries.isNotEmpty)
