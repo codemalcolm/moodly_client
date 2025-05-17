@@ -46,20 +46,11 @@ class MoodsCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: const Color.fromARGB(126, 0, 0, 0),
-            offset: const Offset(2, 0),
-            blurRadius: 6,
-          ),
-        ],
       ),
       child: Column(
         children: [
-          Text('How is your mood today?', style: theme.textTheme.bodyMedium),
-          const SizedBox(height: 10),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),

@@ -35,7 +35,8 @@ class MyApp extends StatelessWidget {
         '/day-view':
             (context) => const AppScaffold(currentIndex: 0, showAppBar: false),
         '/all-entries': (context) => const AppScaffold(currentIndex: 1),
-        '/new-entry': (context) => const AppScaffold(currentIndex: 2),
+        '/new-entry':
+            (context) => const AppScaffold(currentIndex: 2, showAppBar: false),
         '/fasties': (context) => const AppScaffold(currentIndex: 3),
         '/settings': (context) => const AppScaffold(currentIndex: 4),
         '/settings-account': (context) => const SettingsAccountScreen(),

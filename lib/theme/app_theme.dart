@@ -39,7 +39,7 @@ class AppTheme {
       colorScheme: ColorScheme.light(
         primary: primaryColor,
         secondary: LightColors.secondary,
-        surface: LightColors.surface,
+        surface: const Color.fromARGB(255, 236, 240, 243),
       ),
       textTheme: const TextTheme(
         bodyMedium: TextStyle(color: LightColors.textPrimary),
