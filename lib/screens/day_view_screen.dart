@@ -31,17 +31,35 @@ class JournalEntry {
   }
 }
 
+class DailyTask {
+  final String id;
+  final String name;
+  final bool isDone;
+
+  DailyTask({required this.id, required this.name, required this.isDone});
+
+  factory DailyTask.fromJson(Map<String, dynamic> json) {
+    return DailyTask(
+      id: json['_id'],
+      name: json['name'],
+      isDone: json['isDone'],
+    );
+  }
+}
+
 class DayEntry {
   final String id;
   final String dayEntryDate;
   final int? mood;
   final List<JournalEntry> journalEntries;
+  final List<DailyTask> dailyTasks;
 
   DayEntry({
     required this.id,
     required this.dayEntryDate,
     required this.mood,
     required this.journalEntries,
+    required this.dailyTasks,
   });
 
   factory DayEntry.fromJson(Map<String, dynamic> json) {
@@ -52,6 +70,10 @@ class DayEntry {
       journalEntries:
           (json['journalEntries'] as List<dynamic>)
               .map((e) => JournalEntry.fromJson(e))
+              .toList(),
+      dailyTasks:
+          (json['dailyTasks'] as List<dynamic>)
+              .map((e) => DailyTask.fromJson(e))
               .toList(),
     );
   }
@@ -301,6 +323,7 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                   dayEntryDate: _dayEntry!.dayEntryDate,
                                   mood: index,
                                   journalEntries: _dayEntry!.journalEntries,
+                                  dailyTasks: _dayEntry!.dailyTasks,
                                 );
                               }
                             });
@@ -392,6 +415,7 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                   'Mood: ${_dayEntry!.mood}',
                                   style: const TextStyle(fontSize: 16),
                                 ),
+
                                 const SizedBox(height: 10),
                                 if (_dayEntry!.journalEntries.isNotEmpty)
                                   ..._dayEntry!.journalEntries.map(
@@ -406,6 +430,27 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                           ),
                                         ),
                                         Text('Text: ${entry.entryText}'),
+                                        const SizedBox(height: 10),
+                                      ],
+                                    ),
+                                  )
+                                else
+                                  const Text(
+                                    'No journal entries for this day.',
+                                  ),
+                                if (_dayEntry!.dailyTasks.isNotEmpty)
+                                  ..._dayEntry!.dailyTasks.map(
+                                    (entry) => Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Name: ${entry.name}',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text('Text: ${entry.isDone}'),
                                         const SizedBox(height: 10),
                                       ],
                                     ),
