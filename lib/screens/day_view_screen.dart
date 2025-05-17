@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -32,7 +34,7 @@ class JournalEntry {
 class DayEntry {
   final String id;
   final String dayEntryDate;
-  final String mood;
+  final int? mood;
   final List<JournalEntry> journalEntries;
 
   DayEntry({
@@ -76,7 +78,7 @@ class _DayViewScreenState extends State<DayViewScreen> {
     final uri = Uri.parse('http://10.0.2.2:5000/api/v1/days');
     final Map<String, dynamic> requestBody = {
       "dayEntryDate": formattedDate,
-      "mood": "unfilled",
+      "mood": -1,
       "dailyTasks": [],
       "journalEntries": [],
     };
@@ -125,6 +127,17 @@ class _DayViewScreenState extends State<DayViewScreen> {
         if (jsonResponse['dayEntry'] != null) {
           setState(() {
             _dayEntry = DayEntry.fromJson(jsonResponse['dayEntry']);
+            if (_dayEntry!.mood != -1) {
+              setState(() {
+                selectedMoodIndex = _dayEntry!.mood;
+                showMoodSelector = false;
+              });
+            } else {
+              setState(() {
+                selectedMoodIndex = null;
+                showMoodSelector = true;
+              });
+            }
           });
         } else {
           setState(() {
@@ -245,7 +258,8 @@ class _DayViewScreenState extends State<DayViewScreen> {
                       ),
                     ),
                   ),
-                  if (selectedMoodIndex == null || showMoodSelector)
+                  if (_dayEntry != null &&
+                      (selectedMoodIndex == null || showMoodSelector))
                     Column(
                       children: [
                         MoodsCard(
@@ -281,7 +295,9 @@ class _DayViewScreenState extends State<DayViewScreen> {
                             ],
                           ),
                         ),
-                        if (selectedMoodIndex != null && !showMoodSelector)
+                        if (_dayEntry != null &&
+                            selectedMoodIndex != null &&
+                            !showMoodSelector)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
