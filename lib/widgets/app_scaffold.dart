@@ -8,7 +8,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class AppScaffold extends StatelessWidget {
   final int currentIndex;
-  const AppScaffold({super.key, required this.currentIndex});
+  final bool showAppBar;
+
+  const AppScaffold({
+    super.key,
+    required this.currentIndex,
+    this.showAppBar = true,
+  });
 
   static final List<Widget> _pages = [
     DayViewScreen(),
@@ -37,11 +43,10 @@ class AppScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_titles[currentIndex]),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-      ),
+      appBar:
+          showAppBar
+              ? AppBar(title: Text(_titles[currentIndex]), centerTitle: true)
+              : null,
       body: _pages[currentIndex],
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,

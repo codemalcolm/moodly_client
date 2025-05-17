@@ -32,7 +32,8 @@ class MyApp extends StatelessWidget {
       themeMode: themeNotifier.themeMode,
       initialRoute: '/day-view',
       routes: {
-        '/day-view': (context) => const AppScaffold(currentIndex: 0),
+        '/day-view':
+            (context) => const AppScaffold(currentIndex: 0, showAppBar: false),
         '/all-entries': (context) => const AppScaffold(currentIndex: 1),
         '/new-entry': (context) => const AppScaffold(currentIndex: 2),
         '/fasties': (context) => const AppScaffold(currentIndex: 3),
