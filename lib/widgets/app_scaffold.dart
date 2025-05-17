@@ -45,7 +45,11 @@ class AppScaffold extends StatelessWidget {
     return Scaffold(
       appBar:
           showAppBar
-              ? AppBar(title: Text(_titles[currentIndex]), centerTitle: true)
+              ? AppBar(
+                title: Text(_titles[currentIndex]),
+                centerTitle: true,
+                automaticallyImplyLeading: false,
+              )
               : null,
       body: _pages[currentIndex],
       bottomNavigationBar: NavigationBar(
