@@ -42,9 +42,7 @@ class CustomTextInput extends StatelessWidget {
           hintText: hintText,
           hintStyle: TextStyle(color: colorScheme.onSurface),
           filled: true,
-          fillColor:
-              Colors
-                  .transparent, // <-- wichtig, damit der Container-Hintergrund sichtbar bleibt
+          fillColor: Colors.transparent,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,
