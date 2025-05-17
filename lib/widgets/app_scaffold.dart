@@ -37,7 +37,11 @@ class AppScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_titles[currentIndex]), centerTitle: true),
+      appBar: AppBar(
+        title: Text(_titles[currentIndex]),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+      ),
       body: _pages[currentIndex],
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
