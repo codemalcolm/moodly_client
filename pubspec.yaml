@@ -12,6 +12,7 @@ dependencies:
   flutter_svg: ^2.0.7
   http: ^1.3.0
   image_picker: ^0.8.7+4
+  intl: ^0.20.2
   provider: ^6.1.1
   shared_preferences: ^2.2.2
 
@@ -28,8 +29,12 @@ flutter:
    - assets/icons/moodly_icon_outlined.svg
    - assets/icons/icon_add.svg
    - assets/icons/icon_add_outlined.svg
+   - assets/icons/icon_all_entries.svg
+   - assets/icons/icon_all_entries_outlined.svg
+   - assets/icons/icon_fasties_settings.svg
    - assets/icons/icon_home.svg
    - assets/icons/icon_home_outlined.svg
+   - assets/icons/icon_info.svg
    - assets/icons/icon_mood_angry.svg
    - assets/icons/icon_mood_anxious.svg
    - assets/icons/icon_mood_good.svg
@@ -40,6 +45,9 @@ flutter:
    - assets/icons/icon_mood_tired.svg
    - assets/icons/icon_settings.svg
    - assets/icons/icon_settings_outlined.svg
+   - assets/images/moodly_speech.png
+   - assets/data/fasties.json
+   - assets/data/categories.json
 
   fonts:
     - family: Montserrat

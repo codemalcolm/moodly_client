@@ -1,0 +1,22 @@
+[
+  {
+    "dayEntry": {
+      "dayEntryDate": "2025-09-07T00:00:00.000Z",
+      "mood": "tired",
+      "dailyTasks": [],
+      "journalEntries": [],
+      "_id": "681e44b953fdae46122ab584",
+      "__v": 0
+    }
+  },
+  {
+    "dayEntry": {
+      "dayEntryDate": "2025-08-29T00:00:00.000Z",
+      "mood": "sad",
+      "dailyTasks": [],
+      "journalEntries": [],
+      "_id": "681e44b953fdae46122ab581",
+      "__v": 0
+    }
+  }
+]

@@ -1,14 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+class Mood {
+  final String name;
+  final String iconPath;
+  Mood({required this.name, required this.iconPath});
+}
+
 class MoodsCard extends StatelessWidget {
-  final List<String> moodIconPaths;
   final int? selectedMoodIndex;
   final ValueChanged<int> onMoodSelected;
 
+  static List<String> moods = [
+    'assets/icons/icon_mood_angry.svg',
+    'assets/icons/icon_mood_good.svg',
+    'assets/icons/icon_mood_moody.svg',
+    'assets/icons/icon_mood_loving.svg',
+    'assets/icons/icon_mood_happy.svg',
+    'assets/icons/icon_mood_sad.svg',
+    'assets/icons/icon_mood_tired.svg',
+    'assets/icons/icon_mood_anxious.svg',
+  ];
+
+  static List<Color> moodColors = [
+    const Color.fromARGB(138, 207, 32, 88),
+    const Color.fromARGB(138, 255, 117, 126),
+    const Color.fromARGB(139, 0, 150, 135),
+    const Color.fromARGB(138, 161, 27, 185),
+    const Color.fromARGB(138, 255, 134, 41),
+    const Color.fromARGB(137, 29, 18, 181),
+    const Color.fromARGB(136, 73, 226, 42),
+    const Color.fromARGB(137, 61, 38, 120),
+  ];
+
   const MoodsCard({
     super.key,
-    required this.moodIconPaths,
     required this.selectedMoodIndex,
     required this.onMoodSelected,
   });
@@ -16,55 +42,44 @@ class MoodsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: const Color.fromARGB(126, 0, 0, 0),
-            offset: const Offset(2, 0),
-            blurRadius: 6,
-          ),
-        ],
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         children: [
-          Text('How do you feel?', style: theme.textTheme.titleMedium),
-          const SizedBox(height: 16),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4, // z. B. 4 Spalten
-              crossAxisSpacing: 16,
+              crossAxisCount: 4,
               mainAxisSpacing: 16,
+              childAspectRatio: 1,
+              mainAxisExtent: 60,
             ),
-            itemCount: moodIconPaths.length,
+            itemCount: moods.length,
             itemBuilder: (context, index) {
               final isSelected = selectedMoodIndex == index;
-
               return GestureDetector(
                 onTap: () => onMoodSelected(index),
                 child: Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
+                    color: moodColors[index],
                     shape: BoxShape.circle,
                     border: Border.all(
                       color:
                           isSelected
                               ? theme.colorScheme.primary
-                              : Colors.transparent,
-                      width: 3,
+                              : const Color.fromARGB(0, 0, 0, 0),
+                      width: 2,
                     ),
                   ),
                   child: SvgPicture.asset(
-                    moodIconPaths[index],
-                    width: 40,
-                    height: 40,
+                    moods[index],
                     colorFilter: ColorFilter.mode(
                       isSelected
                           ? theme.colorScheme.primary
@@ -76,6 +91,7 @@ class MoodsCard extends StatelessWidget {
               );
             },
           ),
+          SizedBox(height: 5),
         ],
       ),
     );

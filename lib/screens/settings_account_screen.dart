@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:moodly_client/widgets/custom_image_selector.dart';
+import 'package:moodly_client/screens/image_preview_screen.dart';
 import 'package:moodly_client/widgets/custom_text_input.dart';
 
 class SettingsAccountScreen extends StatefulWidget {
@@ -10,11 +14,11 @@ class SettingsAccountScreen extends StatefulWidget {
 
 class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
   bool _isPasswordEditable = false;
+  List<File> imageFiles = [];
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-
     return Scaffold(
       appBar: AppBar(title: const Text('Account Settings')),
       body: SingleChildScrollView(
@@ -40,26 +44,44 @@ class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
                             children: [
                               ListTile(
                                 leading: const Icon(Icons.visibility),
-                                title: const Text('View Profile Picture'),
+                                title: const Text('View profile picture'),
                                 onTap: () {
                                   Navigator.pop(context);
-                                  // TODO: Vollbild-Vorschau öffnen
+                                  if (imageFiles.isNotEmpty) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => ImagePreviewScreen(
+                                              image: imageFiles.first,
+                                            ),
+                                      ),
+                                    );
+                                  }
                                 },
                               ),
                               ListTile(
                                 leading: const Icon(Icons.photo),
-                                title: const Text('Change Profile Picture'),
-                                onTap: () {
+                                title: const Text('Change profile picture'),
+                                onTap: () async {
                                   Navigator.pop(context);
-                                  // TODO: Bildauswahl starten
+                                  final pickedImage =
+                                      await CustomImageSelector.pickSingleImage();
+                                  if (pickedImage != null) {
+                                    setState(() {
+                                      imageFiles = [pickedImage];
+                                    });
+                                  }
                                 },
                               ),
                               ListTile(
-                                leading: const Icon(Icons.delete),
-                                title: const Text('Remove Profile Picture'),
-                                onTap: () {
+                                leading: const Icon(Icons.photo),
+                                title: const Text('Remove profile picture'),
+                                onTap: () async {
                                   Navigator.pop(context);
-                                  // TODO: Zurücksetzen des Bilds
+                                  setState(() {
+                                    imageFiles = [];
+                                  });
                                 },
                               ),
                             ],
@@ -67,17 +89,30 @@ class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
                         },
                       );
                     },
-                    child: const CircleAvatar(
+                    child: CircleAvatar(
                       radius: 50,
                       backgroundColor: Colors.grey,
-                      child: Icon(Icons.person, size: 50, color: Colors.white),
+                      child:
+                          imageFiles.isNotEmpty
+                              ? ClipOval(
+                                child: Image.file(
+                                  imageFiles.first,
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                              : const Icon(
+                                Icons.person,
+                                size: 50,
+                                color: Colors.white,
+                              ),
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 32),
-
             Align(
               alignment: Alignment.centerLeft,
               child: Text('Username', style: textTheme.titleMedium),
@@ -85,10 +120,9 @@ class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
             const SizedBox(height: 8),
             const CustomTextInput(
               hintText: 'Username',
-              initialValue: 'moodly_user',
+              initialValue: 'moodly_user', // TODO: show actual user data
             ),
             const SizedBox(height: 24),
-
             Align(
               alignment: Alignment.centerLeft,
               child: Text('Name & Last name', style: textTheme.titleMedium),
@@ -96,10 +130,9 @@ class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
             const SizedBox(height: 8),
             const CustomTextInput(
               hintText: 'Full Name',
-              initialValue: 'Max Exampleman',
+              initialValue: 'Max moodly',
             ),
             const SizedBox(height: 24),
-
             Align(
               alignment: Alignment.centerLeft,
               child: Text('Email', style: textTheme.titleMedium),
@@ -108,11 +141,9 @@ class _SettingsAccountScreenState extends State<SettingsAccountScreen> {
             const CustomTextInput(
               hintText: 'Email',
               keyboardType: TextInputType.emailAddress,
-              initialValue: 'max.exampleman@moodly.com',
+              initialValue: 'user@moodly.com',
             ),
             const SizedBox(height: 24),
-
-            // Password
             Align(
               alignment: Alignment.centerLeft,
               child: Text('Password', style: textTheme.titleMedium),
