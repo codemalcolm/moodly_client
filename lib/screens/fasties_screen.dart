@@ -181,15 +181,16 @@ class _FastiesScreenState extends State<FastiesScreen> {
                   await loadFastiesAndPreferences();
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Fasties updated!')),
+                      SnackBar(
+                        content: Text(
+                          'Fasties updated!',
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                        backgroundColor: theme.secondaryHeaderColor,
+                      ),
                     );
                   }
                   await loadFastiesAndPreferences();
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Fasties updated!')),
-                    );
-                  }
                 },
                 icon: SvgPicture.asset(
                   'assets/icons/icon_fasties_settings.svg',

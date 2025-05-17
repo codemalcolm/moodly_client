@@ -99,7 +99,7 @@ class _FastiesSettingsScreenState extends State<FastiesSettingsScreen> {
                   hintText: 'Search categories...',
                   border: OutlineInputBorder(),
                   filled: true,
-                  fillColor: Colors.grey[200],
+                  fillColor: theme.secondaryHeaderColor,
                 ),
               ),
               const SizedBox(height: 16),
