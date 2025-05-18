@@ -24,6 +24,7 @@ class DailyTaskCard extends StatefulWidget {
 
 class _DailyTaskCardState extends State<DailyTaskCard> {
   late bool _isDone;
+  bool _showActions = false;
 
   @override
   void initState() {
@@ -58,26 +59,66 @@ class _DailyTaskCardState extends State<DailyTaskCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 4),
-      padding: EdgeInsets.symmetric(vertical: 4),
-      width: double.infinity,
-      height: 36,
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border.all(width: 1, color: Colors.transparent),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Row(
-        children: [
-          Checkbox(value: _isDone, onChanged: (_) => _toggleIsDone()),
-          Text(
-            widget.name,
-            style: TextStyle(
-              decoration: _isDone ? TextDecoration.lineThrough : null,
+
+    return GestureDetector(
+      onLongPress: () {
+        setState(() {
+          _showActions = true;
+        });
+      },
+      onTap: () {
+        // Tapping anywhere cancels action buttons
+        if (_showActions) {
+          setState(() {
+            _showActions = false;
+          });
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        width: double.infinity,
+        height: 36,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          border: Border.all(width: 1, color: Colors.transparent),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Row(
+          children: [
+            Checkbox(value: _isDone, onChanged: (_) => _toggleIsDone()),
+            Expanded(
+              child: Text(
+                widget.name,
+                style: TextStyle(
+                  decoration: _isDone ? TextDecoration.lineThrough : null,
+                ),
+              ),
             ),
-          ),
-        ],
+            if (_showActions) ...[
+              GestureDetector(
+                child: Container(
+                  padding: EdgeInsets.all(0),
+                  child: const Icon(Icons.edit, size: 18),
+                ),
+                onTap: () {
+                  // TODO: Implement edit
+                },
+              ),
+              SizedBox(width: 8),
+              GestureDetector(
+                child: Container(
+                  padding: EdgeInsets.all(0),
+                  child: const Icon(Icons.delete, size: 18, color: Colors.red,),
+                ),
+                onTap: () {
+                  // TODO: Implement delete
+                },
+              ),
+              SizedBox(width: 8),
+            ],
+          ],
+        ),
       ),
     );
   }
