@@ -92,18 +92,21 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
               ],
             ),
             const SizedBox(height: 24),
-            Text(
-              (selectedMoodIndex != null && !showMoodSelector)
-                  ? "Today's mood:"
-                  : "How is your mood today?",
-              style: theme.textTheme.titleMedium,
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                (selectedMoodIndex != null && !showMoodSelector)
+                    ? "Today's mood:"
+                    : "How is your mood today?",
+                style: theme.textTheme.titleMedium,
+              ),
             ),
             const SizedBox(height: 8),
             if (selectedMoodIndex != null && !showMoodSelector)
-              GestureDetector(
-                onTap: () => setState(() => showMoodSelector = true),
-                child: Align(
-                  alignment: Alignment.center,
+              Align(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: () => setState(() => showMoodSelector = true),
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
