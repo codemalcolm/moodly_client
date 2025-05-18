@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_svg/svg.dart';
 import 'package:moodly_client/widgets/calendar_tab.dart';
+import 'package:moodly_client/widgets/custom_card_small.dart';
 import 'package:moodly_client/widgets/moods_card.dart';
 
 class JournalEntry {
@@ -224,7 +225,9 @@ class _DayViewScreenState extends State<DayViewScreen> {
   }
 
   Future<void> _createDailyTask(String dayId, String name) async {
-    final url = Uri.parse('http://10.0.2.2:5000/api/v1/days/$dayId/daily-tasks');
+    final url = Uri.parse(
+      'http://10.0.2.2:5000/api/v1/days/$dayId/daily-tasks',
+    );
 
     final response = await http.post(
       url,
@@ -246,28 +249,56 @@ class _DayViewScreenState extends State<DayViewScreen> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text('Add Daily Task'),
-          content: TextField(
-            controller: taskNameController,
-            decoration: InputDecoration(hintText: 'Enter task name'),
+        return Dialog(
+          child: Padding(
+            padding: const EdgeInsets.all(
+              16.0,
+            ), // Add padding for better visual spacing
+            child: Column(
+              mainAxisSize:
+                  MainAxisSize
+                      .min, // Ensure the column takes minimal vertical space
+              crossAxisAlignment:
+                  CrossAxisAlignment.start, // Align content to the start
+              children: [
+                Text(
+                  'Add Daily Task',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: taskNameController,
+                  decoration: InputDecoration(hintText: 'Enter task name', hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment
+                          .spaceBetween, // Align buttons to the end
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel', style: TextStyle(color: Colors.red),),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 150,
+                      child: CustomButtonSmall(
+                        onPressed: () async {
+                          final name = taskNameController.text.trim();
+                          if (name.isNotEmpty) {
+                            await _createDailyTask(dayId, name);
+                            Navigator.pop(context);
+                          }
+                        },
+                        label: 'Create task',
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final name = taskNameController.text.trim();
-                if (name.isNotEmpty) {
-                  await _createDailyTask(dayId, name);
-                  Navigator.pop(context);
-                }
-              },
-              child: Text('Create'),
-            ),
-          ],
         );
       },
     );
