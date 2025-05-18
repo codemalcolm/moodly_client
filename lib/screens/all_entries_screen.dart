@@ -63,6 +63,9 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final primaryColor = theme.primaryColor;
+    final bgColor = getAccentBackgroundColor(primaryColor); // hier!
+
     return Scaffold(
       body:
           days.isEmpty
@@ -93,7 +96,7 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                               width: 28,
                               height: 28,
                               colorFilter: ColorFilter.mode(
-                                Theme.of(context).colorScheme.secondary,
+                                theme.colorScheme.secondary,
                                 BlendMode.srcIn,
                               ),
                             ),
@@ -105,7 +108,6 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                             entry['entryDateAndTime'],
                           );
                           final time = DateFormat('HH:mm').format(entryDate);
-                          final bgColor = AccentBackgroundColors.blue;
                           return EntryCard(
                             title: entry['name'] ?? '',
                             text: entry['entryText'] ?? '',
