@@ -43,7 +43,7 @@ Color getAccentBackgroundColor(Color primaryColor) {
   if (primaryColor == AccentColors.green) return AccentBackgroundColors.green;
   if (primaryColor == AccentColors.yellow) return AccentBackgroundColors.yellow;
   if (primaryColor == AccentColors.purple) return AccentBackgroundColors.purple;
-  return AccentBackgroundColors.blue; // fallback
+  return AccentBackgroundColors.blue;
 }
 
 class AppTheme {
