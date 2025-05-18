@@ -6,7 +6,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_svg/svg.dart';
 import 'package:moodly_client/widgets/calendar_tab.dart';
-import 'package:moodly_client/widgets/custom_card_small.dart';
+import 'package:moodly_client/widgets/custom_button_small.dart';
+import 'package:moodly_client/widgets/daily_task_card.dart';
 import 'package:moodly_client/widgets/moods_card.dart';
 
 class JournalEntry {
@@ -268,7 +269,12 @@ class _DayViewScreenState extends State<DayViewScreen> {
                 const SizedBox(height: 16),
                 TextField(
                   controller: taskNameController,
-                  decoration: InputDecoration(hintText: 'Enter task name', hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary)),
+                  decoration: InputDecoration(
+                    hintText: 'Enter task name',
+                    hintStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 24),
                 Row(
@@ -278,7 +284,10 @@ class _DayViewScreenState extends State<DayViewScreen> {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel', style: TextStyle(color: Colors.red),),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.red),
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Container(
@@ -426,6 +435,7 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
@@ -470,19 +480,14 @@ class _DayViewScreenState extends State<DayViewScreen> {
 
                                       if (_dayEntry!.dailyTasks.isNotEmpty)
                                         ..._dayEntry!.dailyTasks.map(
-                                          (entry) => Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Name: ${entry.name}',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              Text('Text: ${entry.isDone}'),
-                                              const SizedBox(height: 10),
-                                            ],
+                                          (task) => DailyTaskCard(
+                                            dayId: _dayEntry!.id,
+                                            taskId: task.id,
+                                            name: task.name,
+                                            isDone: task.isDone,
+                                            onUpdated: () {
+                                              setState(() {}); // Refresh view
+                                            },
                                           ),
                                         )
                                       else
