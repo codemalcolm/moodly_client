@@ -223,6 +223,56 @@ class _DayViewScreenState extends State<DayViewScreen> {
     }
   }
 
+  Future<void> _createDailyTask(String dayId, String name) async {
+    final url = Uri.parse('http://10.0.2.2:5000/api/v1/days/$dayId/daily-tasks');
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'name': name, 'isDone': false}),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Task created: ${response.body}');
+      // Optionally trigger a refresh of the UI
+    } else {
+      print('Failed to create task: ${response.body}');
+    }
+  }
+
+  void _showCreateTaskDialog(BuildContext context, String dayId) {
+    final TextEditingController taskNameController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Add Daily Task'),
+          content: TextField(
+            controller: taskNameController,
+            decoration: InputDecoration(hintText: 'Enter task name'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final name = taskNameController.text.trim();
+                if (name.isNotEmpty) {
+                  await _createDailyTask(dayId, name);
+                  Navigator.pop(context);
+                }
+              },
+              child: Text('Create'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -346,14 +396,47 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        "Daily tasks",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600,
-                                          color: theme.colorScheme.secondary,
-                                        ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Daily tasks",
+                                            style: TextStyle(
+                                              fontSize: 19,
+                                              fontWeight: FontWeight.w600,
+                                              color:
+                                                  theme.colorScheme.secondary,
+                                            ),
+                                          ),
+                                          SizedBox(width: 8),
+                                          GestureDetector(
+                                            onTap:
+                                                () => _showCreateTaskDialog(
+                                                  context,
+                                                  _dayEntry!.id,
+                                                ),
+                                            child: SizedBox(
+                                              width: 24,
+                                              height: 24,
+                                              child: CircleAvatar(
+                                                backgroundColor:
+                                                    Theme.of(
+                                                      context,
+                                                    ).colorScheme.primary,
+                                                foregroundColor: Colors.white,
+                                                child: const Icon(
+                                                  Icons.add,
+                                                  size: 14,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
+
                                       if (_dayEntry!.dailyTasks.isNotEmpty)
                                         ..._dayEntry!.dailyTasks.map(
                                           (entry) => Column(
@@ -387,7 +470,7 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                       Text(
                                         "Today's mood",
                                         style: TextStyle(
-                                          fontSize: 18,
+                                          fontSize: 19,
                                           fontWeight: FontWeight.w600,
                                           color: theme.colorScheme.secondary,
                                         ),
@@ -435,7 +518,7 @@ class _DayViewScreenState extends State<DayViewScreen> {
                             child: ListView(
                               children: [
                                 Text(
-                                  "Daily tasks",
+                                  "Journal entries",
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
