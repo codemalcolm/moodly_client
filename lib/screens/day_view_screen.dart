@@ -281,70 +281,68 @@ class _DayViewScreenState extends State<DayViewScreen> {
             // },
           ),
           Expanded(
-            child: Container(
-              padding: EdgeInsets.only(
-                left: 24,
-                right: 24,
-                bottom: 16,
-                top: 16,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 16),
-                    child: Text(
-                      '${DateFormat('EEEE, dd/MM/yyyy').format(_selectedDate)}',
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
+            child:
+                _isLoadingDayEntry
+                    ? const Center(child: CircularProgressIndicator())
+                    : Container(
+                      padding: EdgeInsets.only(
+                        left: 24,
+                        right: 24,
+                        bottom: 16,
+                        top: 16,
                       ),
-                    ),
-                  ),
-                  if (_dayEntry != null &&
-                      (selectedMoodIndex == null || showMoodSelector))
-                    Column(
-                      children: [
-                        MoodsCard(
-                          selectedMoodIndex: selectedMoodIndex,
-                          onMoodSelected: (index) async {
-                            setState(() {
-                              selectedMoodIndex = index;
-                              showMoodSelector = false;
-                            });
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 16),
+                            child: Text(
+                              '${DateFormat('EEEE, dd/MM/yyyy').format(_selectedDate)}',
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          if (_dayEntry != null &&
+                              (selectedMoodIndex == null || showMoodSelector))
+                            Column(
+                              children: [
+                                MoodsCard(
+                                  selectedMoodIndex: selectedMoodIndex,
+                                  onMoodSelected: (index) async {
+                                    setState(() {
+                                      selectedMoodIndex = index;
+                                      showMoodSelector = false;
+                                    });
 
-                            await updateMood(index);
+                                    await updateMood(index);
 
-                            setState(() {
-                              // Update the local _dayEntry object with new mood
-                              if (_dayEntry != null) {
-                                _dayEntry = DayEntry(
-                                  id: _dayEntry!.id,
-                                  dayEntryDate: _dayEntry!.dayEntryDate,
-                                  mood: index,
-                                  journalEntries: _dayEntry!.journalEntries,
-                                  dailyTasks: _dayEntry!.dailyTasks,
-                                );
-                              }
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child:
-                              _isLoadingDayEntry
-                                  ? const Center(
-                                    child: CircularProgressIndicator(),
-                                  )
-                                  : _dayEntry != null
-                                  ? Column(
+                                    setState(() {
+                                      // Update the local _dayEntry object with new mood
+                                      if (_dayEntry != null) {
+                                        _dayEntry = DayEntry(
+                                          id: _dayEntry!.id,
+                                          dayEntryDate: _dayEntry!.dayEntryDate,
+                                          mood: index,
+                                          journalEntries:
+                                              _dayEntry!.journalEntries,
+                                          dailyTasks: _dayEntry!.dailyTasks,
+                                        );
+                                      }
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -378,71 +376,63 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                           'No daily tasks for this day.',
                                         ),
                                     ],
-                                  )
-                                  : Center(
-                                    child: Text(
-                                      _dayEntryError ??
-                                          'No data for selected day.',
-                                    ),
                                   ),
-                        ),
-                        if (_dayEntry != null &&
-                            selectedMoodIndex != null &&
-                            !showMoodSelector)
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                "Today's mood",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: theme.colorScheme.secondary,
                                 ),
-                              ),
-                              GestureDetector(
-                                onTap:
-                                    () =>
-                                        setState(() => showMoodSelector = true),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: theme.colorScheme.surface,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black26,
-                                          blurRadius: 4,
-                                          offset: Offset(0, 2),
+                                if (_dayEntry != null &&
+                                    selectedMoodIndex != null &&
+                                    !showMoodSelector)
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        "Today's mood",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                          color: theme.colorScheme.secondary,
                                         ),
-                                      ],
-                                    ),
-                                    child: SvgPicture.asset(
-                                      MoodsCard.moods[selectedMoodIndex!],
-                                      width: 48,
-                                      height: 48,
-                                      colorFilter: ColorFilter.mode(
-                                        theme.colorScheme.primary,
-                                        BlendMode.srcIn,
                                       ),
-                                    ),
+                                      GestureDetector(
+                                        onTap:
+                                            () => setState(
+                                              () => showMoodSelector = true,
+                                            ),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(12),
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: theme.colorScheme.surface,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black26,
+                                                  blurRadius: 4,
+                                                  offset: Offset(0, 2),
+                                                ),
+                                              ],
+                                            ),
+                                            child: SvgPicture.asset(
+                                              MoodsCard
+                                                  .moods[selectedMoodIndex!],
+                                              width: 48,
+                                              height: 48,
+                                              colorFilter: ColorFilter.mode(
+                                                theme.colorScheme.primary,
+                                                BlendMode.srcIn,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 16,),
-                  Expanded(
-                    child:
-                        _isLoadingDayEntry
-                            ? const Center(child: CircularProgressIndicator())
-                            : _dayEntry != null
-                            ? ListView(
+                          SizedBox(height: 16),
+                          Expanded(
+                            child: ListView(
                               children: [
                                 Text(
                                   "Daily tasks",
@@ -475,16 +465,11 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                     'No journal entries for this day.',
                                   ),
                               ],
-                            )
-                            : Center(
-                              child: Text(
-                                _dayEntryError ?? 'No data for selected day.',
-                              ),
                             ),
-                  ),
-                ],
-              ),
-            ),
+                          ),
+                        ],
+                      ),
+                    ),
           ),
         ],
       ),
