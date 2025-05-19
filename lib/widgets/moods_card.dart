@@ -28,9 +28,9 @@ class MoodsCard extends StatelessWidget {
     const Color.fromARGB(139, 0, 150, 135),
     const Color.fromARGB(138, 161, 27, 185),
     const Color.fromARGB(138, 255, 134, 41),
-    const Color.fromARGB(137, 29, 18, 181),
+    const Color.fromARGB(149, 83, 75, 203),
     const Color.fromARGB(136, 73, 226, 42),
-    const Color.fromARGB(137, 61, 38, 120),
+    const Color.fromARGB(149, 81, 58, 139),
   ];
 
   const MoodsCard({
@@ -73,7 +73,7 @@ class MoodsCard extends StatelessWidget {
                     border: Border.all(
                       color:
                           isSelected
-                              ? theme.colorScheme.primary
+                              ? theme.colorScheme.onPrimary
                               : const Color.fromARGB(0, 0, 0, 0),
                       width: 2,
                     ),
@@ -82,7 +82,7 @@ class MoodsCard extends StatelessWidget {
                     moods[index],
                     colorFilter: ColorFilter.mode(
                       isSelected
-                          ? theme.colorScheme.primary
+                          ? theme.colorScheme.onPrimary
                           : theme.iconTheme.color ?? Colors.black,
                       BlendMode.srcIn,
                     ),
