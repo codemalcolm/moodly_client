@@ -211,10 +211,8 @@ class _DayViewScreenState extends State<DayViewScreen> {
     }
   }
 
-  final PageController _pageController = PageController(initialPage: 0);
   final DateTime _baseDate = DateTime.now();
   DateTime _selectedDate = DateTime.now();
-  int _currentPage = 0;
 
   Future<String> fetchMessage() async {
     final response = await http.get(Uri.parse(backendUrl));
@@ -320,14 +318,35 @@ class _DayViewScreenState extends State<DayViewScreen> {
     fetchDayEntry(_selectedDate);
   }
 
-  List<DateTime> _getWeekDates(DateTime startDate) {
-    final monday = startDate.subtract(Duration(days: startDate.weekday - 1));
-    return List.generate(7, (i) => monday.add(Duration(days: i)));
-  }
+  static const int _referencePage = 1000; // So we can scroll both ways
+  final PageController _pageController = PageController(
+    initialPage: _referencePage,
+  );
+  int _currentPage = _referencePage; // track current page
 
   DateTime _getDateFromPage(int pageIndex) {
-    int offset = pageIndex - _currentPage;
-    return _selectedDate.add(Duration(days: 7 * offset));
+    int offset = pageIndex - _referencePage;
+    return DateTime.now().add(Duration(days: 7 * offset));
+  }
+
+  void _onPageChanged(int pageIndex) {
+    final newDate = _getDateFromPage(pageIndex);
+    setState(() {
+      _selectedDate = newDate;
+      _currentPage = pageIndex;
+    });
+    fetchDayEntry(newDate);
+  }
+
+  void _onDateSelected(DateTime date) {
+    final int pageIndex =
+        _referencePage + date.difference(DateTime.now()).inDays ~/ 7;
+    setState(() {
+      _selectedDate = date;
+      _currentPage = pageIndex;
+    });
+    _pageController.jumpToPage(pageIndex);
+    fetchDayEntry(date);
   }
 
   @override
@@ -344,32 +363,12 @@ class _DayViewScreenState extends State<DayViewScreen> {
         children: [
           CalendarTab(
             selectedDate: _selectedDate,
-            onDateSelected: (newDate) {
-              setState(() {
-                _selectedDate = newDate;
-              });
-              fetchDayEntry(_selectedDate);
-            },
+            onDateSelected: _onDateSelected,
             pageController: _pageController,
             currentPage: _currentPage,
-            onPageChanged: (pageIndex) {
-              setState(() {
-                final newDate = _getDateFromPage(pageIndex);
-                _selectedDate = newDate;
-                _currentPage = pageIndex;
-              });
-              fetchDayEntry(_selectedDate);
-            },
-            // onPageChanged: (pageIndex) {
-            //   setState(() {
-            //     final newDate = _selectedDate.add(
-            //       Duration(days: 7 * (pageIndex - _currentPage)),
-            //     );
-            //     _selectedDate = newDate;
-            //     _currentPage = pageIndex;
-            //   });
-            // },
+            onPageChanged: _onPageChanged,
           ),
+
           Expanded(
             child:
                 _isLoadingDayEntry
