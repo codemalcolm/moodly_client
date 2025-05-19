@@ -338,13 +338,30 @@ class _DayViewScreenState extends State<DayViewScreen> {
     fetchDayEntry(newDate);
   }
 
+
+ //needed for start of week consistency
+  DateTime getStartOfWeek(DateTime date) {
+    return DateTime(
+      date.year,
+      date.month,
+      date.day,
+    ).subtract(Duration(days: date.weekday - 1));
+  }
+
   void _onDateSelected(DateTime date) {
-    final int pageIndex =
-        _referencePage + date.difference(DateTime.now()).inDays ~/ 7;
+    final DateTime selectedWeekStart = getStartOfWeek(date);
+    final DateTime referenceWeekStart = getStartOfWeek(DateTime.now());
+
+    final int weekOffset =
+        selectedWeekStart.difference(referenceWeekStart).inDays ~/ 7;
+
+    final int pageIndex = _referencePage + weekOffset;
+
     setState(() {
       _selectedDate = date;
       _currentPage = pageIndex;
     });
+
     _pageController.jumpToPage(pageIndex);
     fetchDayEntry(date);
   }
