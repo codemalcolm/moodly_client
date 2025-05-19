@@ -27,6 +27,25 @@ class AccentColors {
   static const purple = Color(0xFF9775FA);
 }
 
+class AccentBackgroundColors {
+  static const blue = Color(0x33579AD1);
+  static const red = Color(0x33F783AC);
+  static const orange = Color(0x33E99234);
+  static const green = Color(0x33249271);
+  static const yellow = Color(0x33EFD126);
+  static const purple = Color(0x339775FA);
+}
+
+Color getAccentBackgroundColor(Color primaryColor) {
+  if (primaryColor == AccentColors.blue) return AccentBackgroundColors.blue;
+  if (primaryColor == AccentColors.red) return AccentBackgroundColors.red;
+  if (primaryColor == AccentColors.orange) return AccentBackgroundColors.orange;
+  if (primaryColor == AccentColors.green) return AccentBackgroundColors.green;
+  if (primaryColor == AccentColors.yellow) return AccentBackgroundColors.yellow;
+  if (primaryColor == AccentColors.purple) return AccentBackgroundColors.purple;
+  return AccentBackgroundColors.blue;
+}
+
 class AppTheme {
   static ThemeData lightTheme(Color primaryColor) {
     return ThemeData(

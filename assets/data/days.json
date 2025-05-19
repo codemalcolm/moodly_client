@@ -11,10 +11,25 @@
   },
   {
     "dayEntry": {
-      "dayEntryDate": "2025-08-29T00:00:00.000Z",
+      "dayEntryDate": "2025-05-09T00:00:00.000Z",
       "mood": "sad",
       "dailyTasks": [],
-      "journalEntries": [],
+      "journalEntries": [
+        "681e023b055f0c5b2fb344a1",
+        "681e023b055f0c5b2fb344a0"
+      ],
+      "_id": "681e44b953fdae46122ab581",
+      "__v": 0
+    }
+  },
+  {
+    "dayEntry": {
+      "dayEntryDate": "2025-05-10T00:00:00.000Z",
+      "mood": "sad",
+      "dailyTasks": [],
+      "journalEntries": [
+        "681e023b055f0c5b2fb344a2"
+      ],
       "_id": "681e44b953fdae46122ab581",
       "__v": 0
     }
