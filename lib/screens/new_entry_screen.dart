@@ -145,9 +145,9 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
               ),
             const SizedBox(height: 24),
             Text('Title', style: theme.textTheme.titleMedium),
-            const CustomTextInput(),
+            const CustomTextInput(hintText: 'Add an optional title...'),
             const SizedBox(height: 24),
-            Text('What is on your mind?', style: theme.textTheme.titleMedium),
+            Text('Entry', style: theme.textTheme.titleMedium),
             const JournalEntryTextField(hintText: 'Write something...'),
             const SizedBox(height: 24),
             Text(

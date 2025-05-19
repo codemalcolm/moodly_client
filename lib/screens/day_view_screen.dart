@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_svg/svg.dart';
 import 'package:moodly_client/widgets/calendar_tab.dart';
+import 'package:moodly_client/widgets/custom_button_small.dart';
+import 'package:moodly_client/widgets/daily_task_card.dart';
 import 'package:moodly_client/widgets/moods_card.dart';
 
 class JournalEntry {
@@ -209,10 +211,8 @@ class _DayViewScreenState extends State<DayViewScreen> {
     }
   }
 
-  final PageController _pageController = PageController(initialPage: 0);
   final DateTime _baseDate = DateTime.now();
   DateTime _selectedDate = DateTime.now();
-  int _currentPage = 0;
 
   Future<String> fetchMessage() async {
     final response = await http.get(Uri.parse(backendUrl));
@@ -223,6 +223,94 @@ class _DayViewScreenState extends State<DayViewScreen> {
     }
   }
 
+  Future<void> _createDailyTask(String dayId, String name) async {
+    final url = Uri.parse(
+      'http://10.0.2.2:5000/api/v1/days/$dayId/daily-tasks',
+    );
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'name': name, 'isDone': false}),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Task created: ${response.body}');
+      // Optionally trigger a refresh of the UI
+    } else {
+      print('Failed to create task: ${response.body}');
+    }
+  }
+
+  void _showCreateTaskDialog(BuildContext context, String dayId) {
+    final TextEditingController taskNameController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Padding(
+            padding: const EdgeInsets.all(
+              16.0,
+            ), // Add padding for better visual spacing
+            child: Column(
+              mainAxisSize:
+                  MainAxisSize
+                      .min, // Ensure the column takes minimal vertical space
+              crossAxisAlignment:
+                  CrossAxisAlignment.start, // Align content to the start
+              children: [
+                Text(
+                  'Add Daily Task',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: taskNameController,
+                  decoration: InputDecoration(
+                    hintText: 'Enter task name',
+                    hintStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment
+                          .spaceBetween, // Align buttons to the end
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 150,
+                      child: CustomButtonSmall(
+                        onPressed: () async {
+                          final name = taskNameController.text.trim();
+                          if (name.isNotEmpty) {
+                            await _createDailyTask(dayId, name);
+                            Navigator.pop(context);
+                          }
+                        },
+                        label: 'Create task',
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -230,14 +318,52 @@ class _DayViewScreenState extends State<DayViewScreen> {
     fetchDayEntry(_selectedDate);
   }
 
-  List<DateTime> _getWeekDates(DateTime startDate) {
-    final monday = startDate.subtract(Duration(days: startDate.weekday - 1));
-    return List.generate(7, (i) => monday.add(Duration(days: i)));
-  }
+  static const int _referencePage = 1000; // So we can scroll both ways
+  final PageController _pageController = PageController(
+    initialPage: _referencePage,
+  );
+  int _currentPage = _referencePage; // track current page
 
   DateTime _getDateFromPage(int pageIndex) {
-    int offset = pageIndex - _currentPage;
-    return _selectedDate.add(Duration(days: 7 * offset));
+    int offset = pageIndex - _referencePage;
+    return DateTime.now().add(Duration(days: 7 * offset));
+  }
+
+  void _onPageChanged(int pageIndex) {
+    final newDate = _getDateFromPage(pageIndex);
+    setState(() {
+      _selectedDate = newDate;
+      _currentPage = pageIndex;
+    });
+    fetchDayEntry(newDate);
+  }
+
+
+ //needed for start of week consistency
+  DateTime getStartOfWeek(DateTime date) {
+    return DateTime(
+      date.year,
+      date.month,
+      date.day,
+    ).subtract(Duration(days: date.weekday - 1));
+  }
+
+  void _onDateSelected(DateTime date) {
+    final DateTime selectedWeekStart = getStartOfWeek(date);
+    final DateTime referenceWeekStart = getStartOfWeek(DateTime.now());
+
+    final int weekOffset =
+        selectedWeekStart.difference(referenceWeekStart).inDays ~/ 7;
+
+    final int pageIndex = _referencePage + weekOffset;
+
+    setState(() {
+      _selectedDate = date;
+      _currentPage = pageIndex;
+    });
+
+    _pageController.jumpToPage(pageIndex);
+    fetchDayEntry(date);
   }
 
   @override
@@ -254,123 +380,130 @@ class _DayViewScreenState extends State<DayViewScreen> {
         children: [
           CalendarTab(
             selectedDate: _selectedDate,
-            onDateSelected: (newDate) {
-              setState(() {
-                _selectedDate = newDate;
-              });
-              fetchDayEntry(_selectedDate);
-            },
+            onDateSelected: _onDateSelected,
             pageController: _pageController,
             currentPage: _currentPage,
-            onPageChanged: (pageIndex) {
-              setState(() {
-                final newDate = _getDateFromPage(pageIndex);
-                _selectedDate = newDate;
-                _currentPage = pageIndex;
-              });
-              fetchDayEntry(_selectedDate);
-            },
-            // onPageChanged: (pageIndex) {
-            //   setState(() {
-            //     final newDate = _selectedDate.add(
-            //       Duration(days: 7 * (pageIndex - _currentPage)),
-            //     );
-            //     _selectedDate = newDate;
-            //     _currentPage = pageIndex;
-            //   });
-            // },
+            onPageChanged: _onPageChanged,
           ),
+
           Expanded(
-            child: Container(
-              padding: EdgeInsets.only(
-                left: 24,
-                right: 24,
-                bottom: 16,
-                top: 16,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 16),
-                    child: Text(
-                      '${DateFormat('EEEE, dd/MM/yyyy').format(_selectedDate)}',
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
+            child:
+                _isLoadingDayEntry
+                    ? const Center(child: CircularProgressIndicator())
+                    : Container(
+                      padding: EdgeInsets.only(
+                        left: 24,
+                        right: 24,
+                        bottom: 16,
+                        top: 16,
                       ),
-                    ),
-                  ),
-                  if (_dayEntry != null &&
-                      (selectedMoodIndex == null || showMoodSelector))
-                    Column(
-                      children: [
-                        MoodsCard(
-                          selectedMoodIndex: selectedMoodIndex,
-                          onMoodSelected: (index) async {
-                            setState(() {
-                              selectedMoodIndex = index;
-                              showMoodSelector = false;
-                            });
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 16),
+                            child: Text(
+                              '${DateFormat('EEEE, dd/MM/yyyy').format(_selectedDate)}',
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          if (_dayEntry != null &&
+                              (selectedMoodIndex == null || showMoodSelector))
+                            Column(
+                              children: [
+                                MoodsCard(
+                                  selectedMoodIndex: selectedMoodIndex,
+                                  onMoodSelected: (index) async {
+                                    setState(() {
+                                      selectedMoodIndex = index;
+                                      showMoodSelector = false;
+                                    });
 
-                            await updateMood(index);
+                                    await updateMood(index);
 
-                            setState(() {
-                              // Update the local _dayEntry object with new mood
-                              if (_dayEntry != null) {
-                                _dayEntry = DayEntry(
-                                  id: _dayEntry!.id,
-                                  dayEntryDate: _dayEntry!.dayEntryDate,
-                                  mood: index,
-                                  journalEntries: _dayEntry!.journalEntries,
-                                  dailyTasks: _dayEntry!.dailyTasks,
-                                );
-                              }
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child:
-                              _isLoadingDayEntry
-                                  ? const Center(
-                                    child: CircularProgressIndicator(),
-                                  )
-                                  : _dayEntry != null
-                                  ? Column(
+                                    setState(() {
+                                      // Update the local _dayEntry object with new mood
+                                      if (_dayEntry != null) {
+                                        _dayEntry = DayEntry(
+                                          id: _dayEntry!.id,
+                                          dayEntryDate: _dayEntry!.dayEntryDate,
+                                          mood: index,
+                                          journalEntries:
+                                              _dayEntry!.journalEntries,
+                                          dailyTasks: _dayEntry!.dailyTasks,
+                                        );
+                                      }
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        "Daily tasks",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600,
-                                          color: theme.colorScheme.secondary,
-                                        ),
-                                      ),
-                                      if (_dayEntry!.dailyTasks.isNotEmpty)
-                                        ..._dayEntry!.dailyTasks.map(
-                                          (entry) => Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Name: ${entry.name}',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Daily tasks",
+                                            style: TextStyle(
+                                              fontSize: 19,
+                                              fontWeight: FontWeight.w600,
+                                              color:
+                                                  theme.colorScheme.secondary,
+                                            ),
+                                          ),
+                                          SizedBox(width: 8),
+                                          GestureDetector(
+                                            onTap:
+                                                () => _showCreateTaskDialog(
+                                                  context,
+                                                  _dayEntry!.id,
+                                                ),
+                                            child: SizedBox(
+                                              width: 24,
+                                              height: 24,
+                                              child: CircleAvatar(
+                                                backgroundColor:
+                                                    Theme.of(
+                                                      context,
+                                                    ).colorScheme.primary,
+                                                foregroundColor: Colors.white,
+                                                child: const Icon(
+                                                  Icons.add,
+                                                  size: 14,
                                                 ),
                                               ),
-                                              Text('Text: ${entry.isDone}'),
-                                              const SizedBox(height: 10),
-                                            ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      if (_dayEntry!.dailyTasks.isNotEmpty)
+                                        ..._dayEntry!.dailyTasks.map(
+                                          (task) => DailyTaskCard(
+                                            dayId: _dayEntry!.id,
+                                            taskId: task.id,
+                                            name: task.name,
+                                            isDone: task.isDone,
+                                            onUpdated: () {
+                                              setState(() {}); // Refresh view
+                                            },
                                           ),
                                         )
                                       else
@@ -378,74 +511,66 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                           'No daily tasks for this day.',
                                         ),
                                     ],
-                                  )
-                                  : Center(
-                                    child: Text(
-                                      _dayEntryError ??
-                                          'No data for selected day.',
-                                    ),
                                   ),
-                        ),
-                        if (_dayEntry != null &&
-                            selectedMoodIndex != null &&
-                            !showMoodSelector)
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                "Today's mood",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: theme.colorScheme.secondary,
                                 ),
-                              ),
-                              GestureDetector(
-                                onTap:
-                                    () =>
-                                        setState(() => showMoodSelector = true),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: theme.colorScheme.surface,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black26,
-                                          blurRadius: 4,
-                                          offset: Offset(0, 2),
+                                if (_dayEntry != null &&
+                                    selectedMoodIndex != null &&
+                                    !showMoodSelector)
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        "Today's mood",
+                                        style: TextStyle(
+                                          fontSize: 19,
+                                          fontWeight: FontWeight.w600,
+                                          color: theme.colorScheme.secondary,
                                         ),
-                                      ],
-                                    ),
-                                    child: SvgPicture.asset(
-                                      MoodsCard.moods[selectedMoodIndex!],
-                                      width: 48,
-                                      height: 48,
-                                      colorFilter: ColorFilter.mode(
-                                        theme.colorScheme.primary,
-                                        BlendMode.srcIn,
                                       ),
-                                    ),
+                                      GestureDetector(
+                                        onTap:
+                                            () => setState(
+                                              () => showMoodSelector = true,
+                                            ),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(12),
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: theme.colorScheme.surface,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black26,
+                                                  blurRadius: 4,
+                                                  offset: Offset(0, 2),
+                                                ),
+                                              ],
+                                            ),
+                                            child: SvgPicture.asset(
+                                              MoodsCard
+                                                  .moods[selectedMoodIndex!],
+                                              width: 48,
+                                              height: 48,
+                                              colorFilter: ColorFilter.mode(
+                                                theme.colorScheme.primary,
+                                                BlendMode.srcIn,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 16,),
-                  Expanded(
-                    child:
-                        _isLoadingDayEntry
-                            ? const Center(child: CircularProgressIndicator())
-                            : _dayEntry != null
-                            ? ListView(
+                          SizedBox(height: 16),
+                          Expanded(
+                            child: ListView(
                               children: [
                                 Text(
-                                  "Daily tasks",
+                                  "Journal entries",
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
@@ -475,16 +600,11 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                     'No journal entries for this day.',
                                   ),
                               ],
-                            )
-                            : Center(
-                              child: Text(
-                                _dayEntryError ?? 'No data for selected day.',
-                              ),
                             ),
-                  ),
-                ],
-              ),
-            ),
+                          ),
+                        ],
+                      ),
+                    ),
           ),
         ],
       ),

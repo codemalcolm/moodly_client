@@ -19,6 +19,7 @@ class CustomTextInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
 
     return Container(
       decoration: BoxDecoration(
@@ -37,7 +38,7 @@ class CustomTextInput extends StatelessWidget {
         onChanged: onChanged,
         keyboardType: keyboardType,
         obscureText: obscureText,
-        style: TextStyle(color: colorScheme.onSurface),
+        style: theme.textTheme.bodyMedium,
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(color: colorScheme.onSurface),
