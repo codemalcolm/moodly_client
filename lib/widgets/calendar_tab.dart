@@ -9,7 +9,7 @@ class CalendarTab extends StatelessWidget {
   final int currentPage;
   final ValueChanged<int> onPageChanged;
 
-  const CalendarTab({
+  CalendarTab({
     super.key,
     required this.selectedDate,
     required this.onDateSelected,
@@ -23,9 +23,13 @@ class CalendarTab extends StatelessWidget {
     return List.generate(7, (i) => monday.add(Duration(days: i)));
   }
 
+  // this is needed to scroll back !!!
+  static const int _referencePage = 1000;
+  final DateTime _referenceDate = DateTime.now(); //start date
+
   DateTime _getDateFromPage(int pageIndex) {
-    int offset = pageIndex - currentPage;
-    return selectedDate.add(Duration(days: 7 * offset));
+    final offset = pageIndex - CalendarTab._referencePage;
+    return _referenceDate.add(Duration(days: 7 * offset));
   }
 
   @override
@@ -81,9 +85,7 @@ class CalendarTab extends StatelessWidget {
               controller: pageController,
               onPageChanged: onPageChanged,
               itemBuilder: (context, index) {
-                final weekStart = _getDateFromPage(
-                  index,
-                ).subtract(Duration(days: selectedDate.weekday - 1));
+                final weekStart = _getDateFromPage(index);
                 final weekDates = _getWeekDates(weekStart);
 
                 return Padding(
