@@ -1,13 +1,18 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_svg/svg.dart';
+import 'package:moodly_client/blocs/daily_task_bloc/daily_task_bloc.dart';
+import 'package:moodly_client/blocs/daily_task_bloc/daily_task_event.dart';
+import 'package:moodly_client/blocs/daily_task_bloc/daily_task_state.dart';
+import 'package:moodly_client/models/daily_task_model.dart';
 import 'package:moodly_client/widgets/calendar_tab.dart';
 import 'package:moodly_client/widgets/custom_button_small.dart';
-import 'package:moodly_client/widgets/daily_task_card.dart';
+import 'package:moodly_client/widgets/daily_task_card_bloc.dart';
 import 'package:moodly_client/widgets/moods_card.dart';
 
 class JournalEntry {
@@ -29,22 +34,6 @@ class JournalEntry {
       name: json['name'],
       entryText: json['entryText'],
       entryDateAndTime: json['entryDateAndTime'],
-    );
-  }
-}
-
-class DailyTask {
-  final String id;
-  final String name;
-  final bool isDone;
-
-  DailyTask({required this.id, required this.name, required this.isDone});
-
-  factory DailyTask.fromJson(Map<String, dynamic> json) {
-    return DailyTask(
-      id: json['_id'],
-      name: json['name'],
-      isDone: json['isDone'],
     );
   }
 }
@@ -151,6 +140,9 @@ class _DayViewScreenState extends State<DayViewScreen> {
         if (jsonResponse['dayEntry'] != null) {
           setState(() {
             _dayEntry = DayEntry.fromJson(jsonResponse['dayEntry']);
+            if (_dayEntry != null) {
+              context.read<DailyTaskBloc>().add(LoadDailyTasks(_dayEntry!.id));
+            }
             if (_dayEntry!.mood != -1) {
               setState(() {
                 selectedMoodIndex = _dayEntry!.mood;
@@ -338,8 +330,7 @@ class _DayViewScreenState extends State<DayViewScreen> {
     fetchDayEntry(newDate);
   }
 
-
- //needed for start of week consistency
+  //needed for start of week consistency
   DateTime getStartOfWeek(DateTime date) {
     return DateTime(
       date.year,
@@ -493,23 +484,40 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                           ),
                                         ],
                                       ),
+                                      BlocBuilder<
+                                        DailyTaskBloc,
+                                        DailyTaskState
+                                      >(
+                                        builder: (context, state) {
+                                          print("📦 Bloc state: $state");
 
-                                      if (_dayEntry!.dailyTasks.isNotEmpty)
-                                        ..._dayEntry!.dailyTasks.map(
-                                          (task) => DailyTaskCard(
-                                            dayId: _dayEntry!.id,
-                                            taskId: task.id,
-                                            name: task.name,
-                                            isDone: task.isDone,
-                                            onUpdated: () {
-                                              setState(() {}); // Refresh view
-                                            },
-                                          ),
-                                        )
-                                      else
-                                        const Text(
-                                          'No daily tasks for this day.',
-                                        ),
+                                          if (state is DailyTaskLoading) {
+                                            return const CircularProgressIndicator();
+                                          } else if (state is DailyTaskLoaded) {
+                                            final tasks = state.tasks;
+                                            print(
+                                              "⭐ Daily tasks loaded: $tasks",
+                                            );
+                                            if (tasks.isEmpty) {
+                                              return const Text(
+                                                'No daily tasks for this day.',
+                                              );
+                                            }
+                                            return Column(
+                                              children:
+                                                  tasks.map((task) {
+                                                    return DailyTaskCardBloc(
+                                                      dayId: _dayEntry!.id,
+                                                      task: task,
+                                                    );
+                                                  }).toList(),
+                                            );
+                                          } else if (state is DailyTaskError) {
+                                            return Text(state.message);
+                                          }
+                                          return const SizedBox.shrink(); // Still in DailyTaskInitial
+                                        },
+                                      ),
                                     ],
                                   ),
                                 ),
