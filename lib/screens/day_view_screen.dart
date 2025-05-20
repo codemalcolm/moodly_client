@@ -9,66 +9,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:moodly_client/blocs/daily_task_bloc/daily_task_bloc.dart';
 import 'package:moodly_client/blocs/daily_task_bloc/daily_task_event.dart';
 import 'package:moodly_client/blocs/daily_task_bloc/daily_task_state.dart';
-import 'package:moodly_client/models/daily_task_model.dart';
+
+import 'package:moodly_client/models/day_entry_model.dart';
 import 'package:moodly_client/widgets/calendar_tab.dart';
 import 'package:moodly_client/widgets/custom_button_small.dart';
 import 'package:moodly_client/widgets/daily_task_card_bloc.dart';
 import 'package:moodly_client/widgets/moods_card.dart';
-
-class JournalEntry {
-  final String id;
-  final String name;
-  final String entryText;
-  final String entryDateAndTime;
-
-  JournalEntry({
-    required this.id,
-    required this.name,
-    required this.entryText,
-    required this.entryDateAndTime,
-  });
-
-  factory JournalEntry.fromJson(Map<String, dynamic> json) {
-    return JournalEntry(
-      id: json['_id'],
-      name: json['name'],
-      entryText: json['entryText'],
-      entryDateAndTime: json['entryDateAndTime'],
-    );
-  }
-}
-
-class DayEntry {
-  final String id;
-  final String dayEntryDate;
-  final int? mood;
-  final List<JournalEntry> journalEntries;
-  final List<DailyTask> dailyTasks;
-
-  DayEntry({
-    required this.id,
-    required this.dayEntryDate,
-    required this.mood,
-    required this.journalEntries,
-    required this.dailyTasks,
-  });
-
-  factory DayEntry.fromJson(Map<String, dynamic> json) {
-    return DayEntry(
-      id: json['_id'],
-      dayEntryDate: json['dayEntryDate'],
-      mood: json['mood'],
-      journalEntries:
-          (json['journalEntries'] as List<dynamic>)
-              .map((e) => JournalEntry.fromJson(e))
-              .toList(),
-      dailyTasks:
-          (json['dailyTasks'] as List<dynamic>)
-              .map((e) => DailyTask.fromJson(e))
-              .toList(),
-    );
-  }
-}
 
 class DayViewScreen extends StatefulWidget {
   const DayViewScreen({super.key});
@@ -215,70 +161,74 @@ class _DayViewScreenState extends State<DayViewScreen> {
     }
   }
 
+  void _showCreateTaskDialog(BuildContext context, String dayId) {
+    final taskNameController = TextEditingController();
 
-void _showCreateTaskDialog(BuildContext context, String dayId) {
-  final taskNameController = TextEditingController();
-
-  showDialog(
-    context: context,
-    builder: (_) => BlocProvider.value(
-      value: context.read<DailyTaskBloc>(),
-      child: Dialog(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Add Daily Task',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: taskNameController,
-                decoration: InputDecoration(
-                  hintText: 'Enter task name',
-                  hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
+    showDialog(
+      context: context,
+      builder:
+          (_) => BlocProvider.value(
+            value: context.read<DailyTaskBloc>(),
+            child: Dialog(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Add Daily Task',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: taskNameController,
+                      decoration: InputDecoration(
+                        hintText: 'Enter task name',
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          width: 150,
+                          child: CustomButtonSmall(
+                            onPressed: () {
+                              final name = taskNameController.text.trim();
+                              if (name.isNotEmpty) {
+                                context.read<DailyTaskBloc>().add(
+                                  AddDailyTask(dayId, name),
+                                );
+                                Navigator.pop(context);
+                              }
+                            },
+                            label: 'Create task',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    width: 150,
-                    child: CustomButtonSmall(
-                      onPressed: () {
-                        final name = taskNameController.text.trim();
-                        if (name.isNotEmpty) {
-                          context.read<DailyTaskBloc>().add(AddDailyTask(dayId, name));
-                          Navigator.pop(context);
-                        }
-                      },
-                      label: 'Create task',
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
-    ),
-  );
-}
-
+    );
+  }
 
   @override
   void initState() {
@@ -466,7 +416,6 @@ void _showCreateTaskDialog(BuildContext context, String dayId) {
                                         DailyTaskState
                                       >(
                                         builder: (context, state) {
-
                                           if (state is DailyTaskLoading) {
                                             return const CircularProgressIndicator();
                                           } else if (state is DailyTaskLoaded) {
