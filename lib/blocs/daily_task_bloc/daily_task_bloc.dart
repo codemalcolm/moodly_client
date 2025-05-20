@@ -19,11 +19,14 @@ class DailyTaskBloc extends Bloc<DailyTaskEvent, DailyTaskState> {
   Future<void> _onLoad(LoadDailyTasks event, Emitter emit) async {
     emit(DailyTaskLoading());
     try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:5000/api/v1/days/${event.dayId}'));
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:5000/api/v1/days/${event.dayId}'),
+      );
       final json = jsonDecode(response.body);
-      final tasks = (json['dayEntry']['dailyTasks'] as List)
-          .map((e) => DailyTask.fromJson(e))
-          .toList();
+      final tasks =
+          (json['dayEntry']['dailyTasks'] as List)
+              .map((e) => DailyTask.fromJson(e))
+              .toList();
       emit(DailyTaskLoaded(tasks));
     } catch (e) {
       emit(DailyTaskError('Failed to load tasks'));
@@ -32,21 +35,48 @@ class DailyTaskBloc extends Bloc<DailyTaskEvent, DailyTaskState> {
 
   Future<void> _onAdd(AddDailyTask event, Emitter emit) async {
     try {
-      await http.post(
-        Uri.parse('http://10.0.2.2:5000/api/v1/days/${event.dayId}/daily-tasks'),
+      final url = Uri.parse(
+        'http://10.0.2.2:5000/api/v1/days/${event.dayId}/daily-tasks',
+      );
+
+      print("We are running !!!!");
+
+      final response = await http.post(
+        url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'name': event.name, 'isDone': false}),
       );
-      add(LoadDailyTasks(event.dayId));
-    } catch (e) {
-      emit(DailyTaskError('Failed to create task'));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final decoded = jsonDecode(response.body);
+        final newTask = DailyTask.fromJson(decoded['dailyTask']);
+
+        if (state is DailyTaskLoaded) {
+          final currentTasks = List<DailyTask>.from(
+            (state as DailyTaskLoaded).tasks,
+          );
+          currentTasks.add(newTask);
+          emit(DailyTaskLoaded(currentTasks));
+        } else {
+          // fallback: reload all tasks from backend
+          add(LoadDailyTasks(event.dayId));
+        }
+      } else {
+        emit(DailyTaskError('Failed to create task: ${response.body}'));
+      }
+    } catch (e, stack) {
+      print('❌ Error creating task: $e');
+      print(stack);
+      emit(DailyTaskError('Exception creating task: $e'));
     }
   }
 
   Future<void> _onToggle(ToggleTaskDone event, Emitter emit) async {
     try {
       await http.patch(
-        Uri.parse('http://10.0.2.2:5000/api/v1/days/${event.dayId}/daily-tasks/${event.taskId}'),
+        Uri.parse(
+          'http://10.0.2.2:5000/api/v1/days/${event.dayId}/daily-tasks/${event.taskId}',
+        ),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'isDone': event.isDone}),
       );
@@ -59,7 +89,9 @@ class DailyTaskBloc extends Bloc<DailyTaskEvent, DailyTaskState> {
   Future<void> _onEdit(EditDailyTask event, Emitter emit) async {
     try {
       await http.patch(
-        Uri.parse('http://10.0.2.2:5000/api/v1/days/${event.dayId}/daily-tasks/${event.taskId}'),
+        Uri.parse(
+          'http://10.0.2.2:5000/api/v1/days/${event.dayId}/daily-tasks/${event.taskId}',
+        ),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'name': event.newName}),
       );
@@ -72,7 +104,9 @@ class DailyTaskBloc extends Bloc<DailyTaskEvent, DailyTaskState> {
   Future<void> _onDelete(DeleteDailyTask event, Emitter emit) async {
     try {
       await http.delete(
-        Uri.parse('http://10.0.2.2:5000/api/v1/days/${event.dayId}/daily-tasks/${event.taskId}'),
+        Uri.parse(
+          'http://10.0.2.2:5000/api/v1/days/${event.dayId}/daily-tasks/${event.taskId}',
+        ),
       );
       add(LoadDailyTasks(event.dayId));
     } catch (e) {
