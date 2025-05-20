@@ -215,93 +215,70 @@ class _DayViewScreenState extends State<DayViewScreen> {
     }
   }
 
-  Future<void> _createDailyTask(String dayId, String name) async {
-    final url = Uri.parse(
-      'http://10.0.2.2:5000/api/v1/days/$dayId/daily-tasks',
-    );
 
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'name': name, 'isDone': false}),
-    );
+void _showCreateTaskDialog(BuildContext context, String dayId) {
+  final taskNameController = TextEditingController();
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      print('Task created: ${response.body}');
-      // Optionally trigger a refresh of the UI
-    } else {
-      print('Failed to create task: ${response.body}');
-    }
-  }
-
-  void _showCreateTaskDialog(BuildContext context, String dayId) {
-    final TextEditingController taskNameController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          child: Padding(
-            padding: const EdgeInsets.all(
-              16.0,
-            ), // Add padding for better visual spacing
-            child: Column(
-              mainAxisSize:
-                  MainAxisSize
-                      .min, // Ensure the column takes minimal vertical space
-              crossAxisAlignment:
-                  CrossAxisAlignment.start, // Align content to the start
-              children: [
-                Text(
-                  'Add Daily Task',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: taskNameController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter task name',
-                    hintStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
+  showDialog(
+    context: context,
+    builder: (_) => BlocProvider.value(
+      value: context.read<DailyTaskBloc>(),
+      child: Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Add Daily Task',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: taskNameController,
+                decoration: InputDecoration(
+                  hintText: 'Enter task name',
+                  hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment
-                          .spaceBetween, // Align buttons to the end
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(color: Colors.red),
-                      ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(color: Colors.red),
                     ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 150,
-                      child: CustomButtonSmall(
-                        onPressed: () async {
-                          final name = taskNameController.text.trim();
-                          if (name.isNotEmpty) {
-                            await _createDailyTask(dayId, name);
-                            Navigator.pop(context);
-                          }
-                        },
-                        label: 'Create task',
-                      ),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    width: 150,
+                    child: CustomButtonSmall(
+                      onPressed: () {
+                        final name = taskNameController.text.trim();
+                        if (name.isNotEmpty) {
+                          context.read<DailyTaskBloc>().add(AddDailyTask(dayId, name));
+                          Navigator.pop(context);
+                        }
+                      },
+                      label: 'Create task',
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      ),
+    ),
+  );
+}
+
 
   @override
   void initState() {
@@ -489,15 +466,11 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                         DailyTaskState
                                       >(
                                         builder: (context, state) {
-                                          print("📦 Bloc state: $state");
 
                                           if (state is DailyTaskLoading) {
                                             return const CircularProgressIndicator();
                                           } else if (state is DailyTaskLoaded) {
                                             final tasks = state.tasks;
-                                            print(
-                                              "⭐ Daily tasks loaded: $tasks",
-                                            );
                                             if (tasks.isEmpty) {
                                               return const Text(
                                                 'No daily tasks for this day.',
