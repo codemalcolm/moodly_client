@@ -16,6 +16,98 @@ import 'package:moodly_client/widgets/custom_button_small.dart';
 import 'package:moodly_client/widgets/daily_task_card_bloc.dart';
 import 'package:moodly_client/widgets/moods_card.dart';
 
+class JournalEntry {
+  final String id;
+  final String name;
+  final String entryText;
+  final String entryDateAndTime;
+  final List<ImageModel> images;
+
+  JournalEntry({
+    required this.id,
+    required this.name,
+    required this.entryText,
+    required this.entryDateAndTime,
+    required this.images,
+  });
+
+  factory JournalEntry.fromJson(Map<String, dynamic> json) {
+    return JournalEntry(
+      id: json['_id'] as String,
+      name: json['name'] as String,
+      entryText: json['entryText'] as String,
+      entryDateAndTime: json['entryDateAndTime'] as String,
+      images:
+          (json['images'] as List<dynamic>?)
+              ?.map((e) => ImageModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+  }
+}
+
+class ImageModel {
+  final String id;
+  final String journalEntryId;
+  final String imageData;
+
+  ImageModel({
+    required this.id,
+    required this.journalEntryId,
+    required this.imageData,
+  });
+
+  factory ImageModel.fromJson(Map<String, dynamic> json) {
+    return ImageModel(
+      id: json['_id'] as String,
+      journalEntryId: json['journalEntryId'] as String,
+      imageData: json['imageData'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'journalEntryId': journalEntryId,
+      'imageData': imageData,
+    };
+  }
+}
+
+class DayEntry {
+  final String id;
+  final String dayEntryDate;
+  final int? mood;
+  final List<JournalEntry> journalEntries;
+  final List<DailyTask> dailyTasks;
+
+  DayEntry({
+    required this.id,
+    required this.dayEntryDate,
+    this.mood,
+    required this.journalEntries,
+    required this.dailyTasks,
+  });
+
+  factory DayEntry.fromJson(Map<String, dynamic> json) {
+    return DayEntry(
+      id: json['_id'] as String,
+      dayEntryDate: json['dayEntryDate'] as String,
+      mood: json['mood'] as int?,
+      journalEntries:
+          (json['journalEntries'] as List<dynamic>?)
+              ?.map((e) => JournalEntry.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      dailyTasks:
+          (json['dailyTasks'] as List<dynamic>?)
+              ?.map((e) => DailyTask.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+  }
+}
+
 class DayViewScreen extends StatefulWidget {
   const DayViewScreen({super.key});
 
@@ -81,6 +173,7 @@ class _DayViewScreenState extends State<DayViewScreen> {
 
     try {
       final response = await http.get(uri);
+
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
         if (jsonResponse['dayEntry'] != null) {
@@ -163,7 +256,74 @@ class _DayViewScreenState extends State<DayViewScreen> {
 
   void _showCreateTaskDialog(BuildContext context, String dayId) {
     final taskNameController = TextEditingController();
+  void _showCreateTaskDialog(BuildContext context, String dayId) {
+    final taskNameController = TextEditingController();
 
+    showDialog(
+      context: context,
+      builder:
+          (_) => BlocProvider.value(
+            value: context.read<DailyTaskBloc>(),
+            child: Dialog(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Add Daily Task',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: taskNameController,
+                      decoration: InputDecoration(
+                        hintText: 'Enter task name',
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          width: 150,
+                          child: CustomButtonSmall(
+                            onPressed: () {
+                              final name = taskNameController.text.trim();
+                              if (name.isNotEmpty) {
+                                context.read<DailyTaskBloc>().add(
+                                  AddDailyTask(dayId, name),
+                                );
+                                Navigator.pop(context);
+                              }
+                            },
+                            label: 'Create task',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+    );
+  }
     showDialog(
       context: context,
       builder:
@@ -437,7 +597,7 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                           } else if (state is DailyTaskError) {
                                             return Text(state.message);
                                           }
-                                          return const SizedBox.shrink(); // Still in DailyTaskInitial
+                                          return const SizedBox.shrink();
                                         },
                                       ),
                                     ],
@@ -508,7 +668,8 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 10),
-                                if (_dayEntry!.journalEntries.isNotEmpty)
+                                if (_dayEntry != null &&
+                                    _dayEntry!.journalEntries.isNotEmpty)
                                   ..._dayEntry!.journalEntries.map(
                                     (entry) => Column(
                                       crossAxisAlignment:
@@ -522,6 +683,40 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                         ),
                                         Text('Text: ${entry.entryText}'),
                                         const SizedBox(height: 10),
+
+                                        Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: [
+                                            ...entry.images.asMap().entries.map((
+                                              image,
+                                            ) {
+                                              final index = image.key;
+                                              final imageMap =
+                                                  image
+                                                      .value; // The object containing image details
+
+                                              final base64Image =
+                                                  imageMap.imageData;
+
+                                              // Decode the base64 string into bytes
+                                              final decodedBytes = base64Decode(
+                                                base64Image,
+                                              );
+
+                                              return Stack(
+                                                children: [
+                                                  Image.memory(
+                                                    decodedBytes,
+                                                    width: 100,
+                                                    height: 100,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ],
+                                              );
+                                            }),
+                                          ],
+                                        ),
                                       ],
                                     ),
                                   )
