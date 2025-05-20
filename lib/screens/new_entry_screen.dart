@@ -24,7 +24,7 @@ DateTime selectedDateTime = DateTime.now();
 class _NewEntryScreenState extends State<NewEntryScreen> {
   int? selectedMoodIndex;
   bool showMoodSelector = true;
-  List<File> imageFiles = [];
+  List<File> _images = [];
   final imagePicker = ImagePicker();
 
   Future<void> selectImage() async {
@@ -35,23 +35,20 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
     );
     if (picked != null) {
       setState(() {
-        imageFiles.add(File(picked.path));
+        _images.add(File(picked.path));
       });
     }
   }
 
   final _nameController = TextEditingController();
   final _textController = TextEditingController();
-  DateTime _selectedDate = DateTime.now();
-  final List<File> _images = [];
 
   Future<void> _pickImages() async {
-    final picker = ImagePicker();
-    final pickedFiles = await picker.pickMultiImage();
+    final pickedFiles = await CustomImageSelector.pickMultipleImages();
 
-    if (pickedFiles != null) {
+    if (pickedFiles.isNotEmpty) {
       setState(() {
-        _images.addAll(pickedFiles.map((xfile) => File(xfile.path)));
+        _images.addAll(pickedFiles);
       });
     }
   }
@@ -83,34 +80,39 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        final journalEntryId = data['_id'];
+        final journalEntryId = data?['journalEntry']['_id'];
 
         // 2. Upload images (if any)
         if (_images.isNotEmpty) {
-          final uploadUri = Uri.parse(
-            'http://10.0.2.2:5000/api/v1/entries/$journalEntryId/images',
-          );
-          final request = http.MultipartRequest('POST', uploadUri);
-
-          for (var image in _images) {
-            final mimeType =
-                lookupMimeType(image.path)?.split('/') ?? ['image', 'jpeg'];
-            request.files.add(
-              await http.MultipartFile.fromPath(
-                'images',
-                image.path,
-                contentType: MediaType(mimeType[0], mimeType[1]),
-              ),
+          print("❗ works");
+          try {
+            final uploadUri = Uri.parse(
+              'http://10.0.2.2:5000/api/v1/entries/$journalEntryId/images',
             );
-          }
+            final request = http.MultipartRequest('POST', uploadUri);
 
-          final uploadResponse = await request.send();
+            for (var image in _images) {
+              final mimeType =
+                  lookupMimeType(image.path)?.split('/') ?? ['image', 'jpeg'];
+              request.files.add(
+                await http.MultipartFile.fromPath(
+                  'file',
+                  image.path,
+                  contentType: MediaType(mimeType[0], mimeType[1]),
+                ),
+              );
+            }
 
-          if (uploadResponse.statusCode != 200 &&
-              uploadResponse.statusCode != 201) {
-            throw Exception(
-              'Image upload failed with status ${uploadResponse.statusCode}',
-            );
+            final uploadResponse = await request.send();
+
+            if (uploadResponse.statusCode != 200 &&
+                uploadResponse.statusCode != 201) {
+              throw Exception(
+                'Image upload failed with status ${uploadResponse.statusCode}',
+              );
+            }
+          } catch (e) {
+            print("❗ Error uploading images : $e");
           }
         }
 
@@ -168,11 +170,11 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
     return DateFormat('dd.MM.yyyy - HH:mm').format(selectedDateTime);
   }
 
-  // void removeImage(int index) {
-  //   setState(() {
-  //     imageFiles.removeAt(index);
-  //   });
-  // }
+  void removeImage(int index) {
+    setState(() {
+      _images.removeAt(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -274,77 +276,76 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              'Add images (${imageFiles.length}/5)',
+              'Add images (${_images.length}/5)',
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 12),
-
-            // Wrap(
-            //   spacing: 12,
-            //   runSpacing: 12,
-            //   children: [
-            //     ...List.generate(imageFiles.length, (index) {
-            //       return Stack(
-            //         children: [
-            //           ClipRRect(
-            //             borderRadius: BorderRadius.circular(8),
-            //             child: Image.file(
-            //               imageFiles[index],
-            //               width: 100,
-            //               height: 100,
-            //               fit: BoxFit.cover,
-            //             ),
-            //           ),
-            //           Positioned(
-            //             top: 4,
-            //             right: 4,
-            //             child: GestureDetector(
-            //               onTap: () => removeImage(index),
-            //               child: Container(
-            //                 decoration: const BoxDecoration(
-            //                   shape: BoxShape.circle,
-            //                   color: Color.fromARGB(130, 0, 0, 0),
-            //                 ),
-            //                 padding: const EdgeInsets.all(4),
-            //                 child: const Icon(
-            //                   Icons.close,
-            //                   size: 16,
-            //                   color: Colors.white,
-            //                 ),
-            //               ),
-            //             ),
-            //           ),
-            //         ],
-            //       );
-            //     }),
-            //     if (imageFiles.length < 5)
-            //       GestureDetector(
-            //         onTap: () async {
-            //           final picked =
-            //               await CustomImageSelector.pickSingleImage();
-            //           if (picked != null) {
-            //             setState(() {
-            //               imageFiles.add(picked);
-            //             });
-            //           }
-            //         },
-            //         child: Container(
-            //           width: 100,
-            //           height: 100,
-            //           decoration: BoxDecoration(
-            //             color: theme.colorScheme.surface,
-            //             border: Border.all(color: theme.dividerColor),
-            //             borderRadius: BorderRadius.circular(8),
-            //           ),
-            //           child: Icon(
-            //             Icons.add,
-            //             size: 40,
-            //             color: theme.iconTheme.color,
-            //           ),
-            //         ),
-            //       ),
-            //   ],
-            // ),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                ...List.generate(_images.length, (index) {
+                  return Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.file(
+                          _images[index],
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        top: 4,
+                        right: 4,
+                        child: GestureDetector(
+                          onTap: () => setState(() => _images.removeAt(index)),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color.fromARGB(130, 0, 0, 0),
+                            ),
+                            padding: const EdgeInsets.all(4),
+                            child: const Icon(
+                              Icons.close,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+                if (_images.length < 5)
+                  GestureDetector(
+                    onTap: () async {
+                      final picked =
+                          await CustomImageSelector.pickSingleImage();
+                      if (picked != null) {
+                        setState(() {
+                          _images.add(picked);
+                        });
+                      }
+                    },
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surface,
+                        border: Border.all(color: theme.dividerColor),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.add,
+                        size: 40,
+                        color: theme.iconTheme.color,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
             const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
