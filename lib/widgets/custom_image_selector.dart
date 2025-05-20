@@ -14,4 +14,18 @@ class CustomImageSelector {
     }
     return null;
   }
+
+  static Future<List<File>> pickMultipleImages() async {
+    final picker = ImagePicker();
+    final pickedFiles = await picker.pickMultiImage(
+      maxWidth: 800,
+      imageQuality: 80,
+    );
+
+    if (pickedFiles != null && pickedFiles.isNotEmpty) {
+      return pickedFiles.map((xfile) => File(xfile.path)).toList();
+    }
+
+    return [];
+  }
 }
