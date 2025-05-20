@@ -9,7 +9,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:moodly_client/blocs/daily_task_bloc/daily_task_bloc.dart';
 import 'package:moodly_client/blocs/daily_task_bloc/daily_task_event.dart';
 import 'package:moodly_client/blocs/daily_task_bloc/daily_task_state.dart';
-import 'package:moodly_client/models/daily_task_model.dart';
+
+import 'package:moodly_client/models/day_entry_model.dart';
 import 'package:moodly_client/widgets/calendar_tab.dart';
 import 'package:moodly_client/widgets/custom_button_small.dart';
 import 'package:moodly_client/widgets/daily_task_card_bloc.dart';
@@ -255,7 +256,74 @@ class _DayViewScreenState extends State<DayViewScreen> {
 
   void _showCreateTaskDialog(BuildContext context, String dayId) {
     final taskNameController = TextEditingController();
+  void _showCreateTaskDialog(BuildContext context, String dayId) {
+    final taskNameController = TextEditingController();
 
+    showDialog(
+      context: context,
+      builder:
+          (_) => BlocProvider.value(
+            value: context.read<DailyTaskBloc>(),
+            child: Dialog(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Add Daily Task',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: taskNameController,
+                      decoration: InputDecoration(
+                        hintText: 'Enter task name',
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          width: 150,
+                          child: CustomButtonSmall(
+                            onPressed: () {
+                              final name = taskNameController.text.trim();
+                              if (name.isNotEmpty) {
+                                context.read<DailyTaskBloc>().add(
+                                  AddDailyTask(dayId, name),
+                                );
+                                Navigator.pop(context);
+                              }
+                            },
+                            label: 'Create task',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+    );
+  }
     showDialog(
       context: context,
       builder:
