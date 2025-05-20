@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:moodly_client/blocs/daily_task_bloc/daily_task_bloc.dart';
+import 'package:moodly_client/blocs/daily_task_bloc/daily_task_repository.dart';
 import 'package:moodly_client/screens/all_entries_screen.dart';
 import 'package:moodly_client/screens/fasties_screen.dart';
 import '../screens/day_view_screen.dart';
@@ -17,7 +20,10 @@ class AppScaffold extends StatelessWidget {
   });
 
   static final List<Widget> _pages = [
-    DayViewScreen(),
+    BlocProvider<DailyTaskBloc>(
+      create: (context) => DailyTaskBloc(context.read<DailyTaskRepository>()),
+      child: DayViewScreen(),
+    ),
     AllEntriesScreen(),
     NewEntryScreen(),
     FastiesScreen(),

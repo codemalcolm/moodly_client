@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:moodly_client/blocs/daily_task_bloc/daily_task_repository.dart';
 import 'package:moodly_client/screens/fasties_settings_screen.dart';
 import 'package:moodly_client/screens/image_preview_screen.dart';
 import 'package:moodly_client/screens/settings_account_screen.dart';
@@ -10,10 +12,15 @@ import 'package:moodly_client/widgets/app_scaffold.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  final dailyTaskRepository = DailyTaskRepository();
+
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeNotifier(),
-      child: const MyApp(),
+    RepositoryProvider<DailyTaskRepository>.value(
+      value: dailyTaskRepository,
+      child: ChangeNotifierProvider(
+        create: (_) => ThemeNotifier(),
+        child: const MyApp(),
+      ),
     ),
   );
 }

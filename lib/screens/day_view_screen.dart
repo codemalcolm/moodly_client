@@ -1,13 +1,18 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_svg/svg.dart';
+import 'package:moodly_client/blocs/daily_task_bloc/daily_task_bloc.dart';
+import 'package:moodly_client/blocs/daily_task_bloc/daily_task_event.dart';
+import 'package:moodly_client/blocs/daily_task_bloc/daily_task_state.dart';
+import 'package:moodly_client/models/daily_task_model.dart';
 import 'package:moodly_client/widgets/calendar_tab.dart';
 import 'package:moodly_client/widgets/custom_button_small.dart';
-import 'package:moodly_client/widgets/daily_task_card.dart';
+import 'package:moodly_client/widgets/daily_task_card_bloc.dart';
 import 'package:moodly_client/widgets/moods_card.dart';
 
 class JournalEntry {
@@ -29,22 +34,6 @@ class JournalEntry {
       name: json['name'],
       entryText: json['entryText'],
       entryDateAndTime: json['entryDateAndTime'],
-    );
-  }
-}
-
-class DailyTask {
-  final String id;
-  final String name;
-  final bool isDone;
-
-  DailyTask({required this.id, required this.name, required this.isDone});
-
-  factory DailyTask.fromJson(Map<String, dynamic> json) {
-    return DailyTask(
-      id: json['_id'],
-      name: json['name'],
-      isDone: json['isDone'],
     );
   }
 }
@@ -151,6 +140,9 @@ class _DayViewScreenState extends State<DayViewScreen> {
         if (jsonResponse['dayEntry'] != null) {
           setState(() {
             _dayEntry = DayEntry.fromJson(jsonResponse['dayEntry']);
+            if (_dayEntry != null) {
+              context.read<DailyTaskBloc>().add(LoadDailyTasks(_dayEntry!.id));
+            }
             if (_dayEntry!.mood != -1) {
               setState(() {
                 selectedMoodIndex = _dayEntry!.mood;
@@ -223,93 +215,70 @@ class _DayViewScreenState extends State<DayViewScreen> {
     }
   }
 
-  Future<void> _createDailyTask(String dayId, String name) async {
-    final url = Uri.parse(
-      'http://10.0.2.2:5000/api/v1/days/$dayId/daily-tasks',
-    );
 
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'name': name, 'isDone': false}),
-    );
+void _showCreateTaskDialog(BuildContext context, String dayId) {
+  final taskNameController = TextEditingController();
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      print('Task created: ${response.body}');
-      // Optionally trigger a refresh of the UI
-    } else {
-      print('Failed to create task: ${response.body}');
-    }
-  }
-
-  void _showCreateTaskDialog(BuildContext context, String dayId) {
-    final TextEditingController taskNameController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          child: Padding(
-            padding: const EdgeInsets.all(
-              16.0,
-            ), // Add padding for better visual spacing
-            child: Column(
-              mainAxisSize:
-                  MainAxisSize
-                      .min, // Ensure the column takes minimal vertical space
-              crossAxisAlignment:
-                  CrossAxisAlignment.start, // Align content to the start
-              children: [
-                Text(
-                  'Add Daily Task',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: taskNameController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter task name',
-                    hintStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
+  showDialog(
+    context: context,
+    builder: (_) => BlocProvider.value(
+      value: context.read<DailyTaskBloc>(),
+      child: Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Add Daily Task',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: taskNameController,
+                decoration: InputDecoration(
+                  hintText: 'Enter task name',
+                  hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment
-                          .spaceBetween, // Align buttons to the end
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(color: Colors.red),
-                      ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(color: Colors.red),
                     ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 150,
-                      child: CustomButtonSmall(
-                        onPressed: () async {
-                          final name = taskNameController.text.trim();
-                          if (name.isNotEmpty) {
-                            await _createDailyTask(dayId, name);
-                            Navigator.pop(context);
-                          }
-                        },
-                        label: 'Create task',
-                      ),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    width: 150,
+                    child: CustomButtonSmall(
+                      onPressed: () {
+                        final name = taskNameController.text.trim();
+                        if (name.isNotEmpty) {
+                          context.read<DailyTaskBloc>().add(AddDailyTask(dayId, name));
+                          Navigator.pop(context);
+                        }
+                      },
+                      label: 'Create task',
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      ),
+    ),
+  );
+}
+
 
   @override
   void initState() {
@@ -338,8 +307,7 @@ class _DayViewScreenState extends State<DayViewScreen> {
     fetchDayEntry(newDate);
   }
 
-
- //needed for start of week consistency
+  //needed for start of week consistency
   DateTime getStartOfWeek(DateTime date) {
     return DateTime(
       date.year,
@@ -493,23 +461,36 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                           ),
                                         ],
                                       ),
+                                      BlocBuilder<
+                                        DailyTaskBloc,
+                                        DailyTaskState
+                                      >(
+                                        builder: (context, state) {
 
-                                      if (_dayEntry!.dailyTasks.isNotEmpty)
-                                        ..._dayEntry!.dailyTasks.map(
-                                          (task) => DailyTaskCard(
-                                            dayId: _dayEntry!.id,
-                                            taskId: task.id,
-                                            name: task.name,
-                                            isDone: task.isDone,
-                                            onUpdated: () {
-                                              setState(() {}); // Refresh view
-                                            },
-                                          ),
-                                        )
-                                      else
-                                        const Text(
-                                          'No daily tasks for this day.',
-                                        ),
+                                          if (state is DailyTaskLoading) {
+                                            return const CircularProgressIndicator();
+                                          } else if (state is DailyTaskLoaded) {
+                                            final tasks = state.tasks;
+                                            if (tasks.isEmpty) {
+                                              return const Text(
+                                                'No daily tasks for this day.',
+                                              );
+                                            }
+                                            return Column(
+                                              children:
+                                                  tasks.map((task) {
+                                                    return DailyTaskCardBloc(
+                                                      dayId: _dayEntry!.id,
+                                                      task: task,
+                                                    );
+                                                  }).toList(),
+                                            );
+                                          } else if (state is DailyTaskError) {
+                                            return Text(state.message);
+                                          }
+                                          return const SizedBox.shrink(); // Still in DailyTaskInitial
+                                        },
+                                      ),
                                     ],
                                   ),
                                 ),
