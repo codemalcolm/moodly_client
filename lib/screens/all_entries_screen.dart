@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -138,29 +140,28 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                               const SizedBox(width: 36, height: 36),
                           ],
                         ),
-
                         const SizedBox(height: 12),
                         ...journalEntries.map((entry) {
                           final entryDate = DateTime.parse(
                             entry['entryDateAndTime'],
                           );
                           final time = DateFormat('HH:mm').format(entryDate);
-                          const String baseUrl =
-                              'http://10.0.2.2:5000/api/v1/images/';
 
-                          final images =
-                              (entry['images'] as List?)
-                                  ?.where((id) => id != null)
-                                  .map((id) => '$baseUrl${id.toString()}')
-                                  .toList() ??
-                              [];
-                          print('Images for entry "${entry['name']}": $images');
-
+                          final imagesData =
+                              (entry['images'] as List<dynamic>? ?? [])
+                                  .where(
+                                    (img) =>
+                                        img != null && img['imageData'] != null,
+                                  )
+                                  .map<Uint8List>(
+                                    (img) => base64Decode(img['imageData']),
+                                  )
+                                  .toList();
                           return EntryCard(
                             title: entry['name'] ?? '',
                             text: entry['entryText'] ?? '',
                             time: time,
-                            images: images,
+                            imageBytes: imagesData,
                             backgroundColor: getAccentBackgroundColor(
                               theme.primaryColor,
                             ),

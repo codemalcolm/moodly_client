@@ -1,10 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 class EntryCard extends StatelessWidget {
   final String title;
   final String text;
   final String time;
-  final List<String> images;
+  final List<Uint8List>? imageBytes;
   final Color backgroundColor;
 
   const EntryCard({
@@ -12,8 +14,8 @@ class EntryCard extends StatelessWidget {
     required this.title,
     required this.text,
     required this.time,
-    required this.images,
     required this.backgroundColor,
+    this.imageBytes,
   });
 
   @override
@@ -29,21 +31,29 @@ class EntryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Titel und Uhrzeit nebeneinander, Uhrzeit rechts
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: Text(title, style: theme.textTheme.titleSmall)),
+              Expanded(
+                child: Text(
+                  title,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
               Text(time, style: theme.textTheme.bodySmall),
             ],
           ),
-          const SizedBox(height: 4),
-          Text(text, style: theme.textTheme.bodyMedium),
-          if (images.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          if (text.isNotEmpty) Text(text, style: theme.textTheme.bodyMedium),
+          if (imageBytes != null && imageBytes!.isNotEmpty) ...[
             const SizedBox(height: 8),
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: images.length,
+              itemCount: imageBytes!.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
                 crossAxisSpacing: 4,
@@ -52,13 +62,7 @@ class EntryCard extends StatelessWidget {
               itemBuilder: (context, index) {
                 return ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    images[index],
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(Icons.broken_image, color: Colors.grey);
-                    },
-                  ),
+                  child: Image.memory(imageBytes![index], fit: BoxFit.cover),
                 );
               },
             ),
