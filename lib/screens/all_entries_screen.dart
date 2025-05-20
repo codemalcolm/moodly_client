@@ -1,6 +1,6 @@
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:moodly_client/theme/app_theme.dart';
@@ -14,8 +14,7 @@ class AllEntriesScreen extends StatefulWidget {
 }
 
 class _AllEntriesScreenState extends State<AllEntriesScreen> {
-  List<Map<String, dynamic>> days = [];
-  List<Map<String, dynamic>> journalEntries = [];
+  List<Map<String, dynamic>> dayEntries = [];
 
   @override
   void initState() {
@@ -24,60 +23,61 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
   }
 
   Future<void> loadData() async {
-    final daysData = await rootBundle.loadString('assets/data/days.json');
-    final entriesData = await rootBundle.loadString(
-      'assets/data/journalEntries.json',
-    );
-
-    final parsedDays = List<Map<String, dynamic>>.from(jsonDecode(daysData));
-    final parsedEntries = List<Map<String, dynamic>>.from(
-      jsonDecode(entriesData),
-    );
-
-    parsedDays.sort((a, b) {
-      final dateA = DateTime.parse(a['dayEntry']['dayEntryDate']);
-      final dateB = DateTime.parse(b['dayEntry']['dayEntryDate']);
-      return dateB.compareTo(dateA);
-    });
-
-    setState(() {
-      days = parsedDays;
-      journalEntries = parsedEntries;
-    });
-  }
-
-  List<Map<String, dynamic>> getEntriesForDay(DateTime date) {
-    return journalEntries.where((entry) {
-        final entryDate = DateTime.parse(entry['entryDateAndTime']);
-        return entryDate.year == date.year &&
-            entryDate.month == date.month &&
-            entryDate.day == date.day;
-      }).toList()
-      ..sort(
-        (a, b) => DateTime.parse(
-          a['entryDateAndTime'],
-        ).compareTo(DateTime.parse(b['entryDateAndTime'])),
+    try {
+      final response = await http.get(
+        Uri.parse(
+          'http://10.0.2.2:5000/api/v1/days/all?page=1&limit=50&sort=+dayEntryDate',
+        ),
       );
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+
+        final List<Map<String, dynamic>> parsedResults =
+            List<Map<String, dynamic>>.from(decoded['results']);
+
+        parsedResults.sort((a, b) {
+          final dateA = DateTime.parse(a['dayEntryDate']);
+          final dateB = DateTime.parse(b['dayEntryDate']);
+          return dateB.compareTo(dateA);
+        });
+
+        setState(() {
+          dayEntries = parsedResults;
+        });
+      } else {
+        debugPrint('Failed to load data: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error loading data: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final primaryColor = theme.primaryColor;
-    final bgColor = getAccentBackgroundColor(primaryColor); // hier!
+    final bgColor = getAccentBackgroundColor(primaryColor);
 
     return Scaffold(
       body:
-          days.isEmpty
+          dayEntries.isEmpty
               ? const Center(child: CircularProgressIndicator())
               : ListView.builder(
                 padding: const EdgeInsets.all(16),
-                itemCount: days.length,
+                itemCount: dayEntries.length,
                 itemBuilder: (context, index) {
-                  final day = days[index]['dayEntry'];
+                  final day = dayEntries[index];
                   final mood = day['mood'];
                   final date = DateTime.parse(day['dayEntryDate']);
-                  final dayEntries = getEntriesForDay(date);
+
+                  final journalEntries = List<Map<String, dynamic>>.from(
+                    day['journalEntries'] ?? [],
+                  )..sort(
+                    (a, b) => DateTime.parse(
+                      a['entryDateAndTime'],
+                    ).compareTo(DateTime.parse(b['entryDateAndTime'])),
+                  );
 
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 24),
@@ -91,23 +91,28 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                               DateFormat('dd.MM.yyyy').format(date),
                               style: theme.textTheme.titleMedium,
                             ),
-                            SvgPicture.asset(
-                              'assets/icons/icon_mood_$mood.svg',
-                              width: 28,
-                              height: 28,
-                              colorFilter: ColorFilter.mode(
-                                theme.colorScheme.secondary,
-                                BlendMode.srcIn,
-                              ),
-                            ),
+                            if (mood != -1 && mood >= 0 && mood <= 7)
+                              SvgPicture.asset(
+                                'assets/icons/icon_mood_$mood.svg',
+                                width: 28,
+                                height: 28,
+                                colorFilter: ColorFilter.mode(
+                                  theme.colorScheme.secondary,
+                                  BlendMode.srcIn,
+                                ),
+                              )
+                            else
+                              const SizedBox(width: 28, height: 28),
                           ],
                         ),
+
                         const SizedBox(height: 12),
-                        ...dayEntries.map((entry) {
+                        ...journalEntries.map((entry) {
                           final entryDate = DateTime.parse(
                             entry['entryDateAndTime'],
                           );
                           final time = DateFormat('HH:mm').format(entryDate);
+
                           return EntryCard(
                             title: entry['name'] ?? '',
                             text: entry['entryText'] ?? '',
