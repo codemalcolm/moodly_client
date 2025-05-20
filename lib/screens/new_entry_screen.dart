@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:moodly_client/widgets/custom_button.dart';
 import 'package:moodly_client/widgets/custom_image_selector.dart';
@@ -9,6 +11,7 @@ import 'package:moodly_client/widgets/date_time_picker.dart';
 import 'package:moodly_client/widgets/journal_entry_textfield.dart';
 import 'package:moodly_client/widgets/moods_card.dart';
 import 'package:intl/intl.dart';
+import 'package:http_parser/http_parser.dart';
 
 class NewEntryScreen extends StatefulWidget {
   const NewEntryScreen({super.key});
@@ -21,7 +24,7 @@ DateTime selectedDateTime = DateTime.now();
 class _NewEntryScreenState extends State<NewEntryScreen> {
   int? selectedMoodIndex;
   bool showMoodSelector = true;
-  List<File> imageFiles = [];
+  List<File> _images = [];
   final imagePicker = ImagePicker();
 
   Future<void> selectImage() async {
@@ -32,10 +35,124 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
     );
     if (picked != null) {
       setState(() {
-        imageFiles.add(File(picked.path));
+        _images.add(File(picked.path));
       });
     }
   }
+
+  final _nameController = TextEditingController();
+  final _textController = TextEditingController();
+
+  Future<void> _pickImages() async {
+    final pickedFiles = await CustomImageSelector.pickMultipleImages();
+
+    if (pickedFiles.isNotEmpty) {
+      setState(() {
+        _images.addAll(pickedFiles);
+      });
+    }
+  }
+
+  Future<void> _submitForm() async {
+    final name = _nameController.text.trim();
+    final text = _textController.text.trim();
+
+    print("$name , $text, ${selectedDateTime.toIso8601String()}");
+
+    if (name.isEmpty || text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a name and text.')),
+      );
+      return;
+    }
+
+    try {
+      // 1. Create the journal entry
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:5000/api/v1/entries'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'name': name,
+          'entryText': text,
+          'entryDateAndTime': selectedDateTime.toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        final journalEntryId = data?['journalEntry']['_id'];
+
+        // 2. Upload images (if any)
+        if (_images.isNotEmpty) {
+          print("❗ works");
+          try {
+            final uploadUri = Uri.parse(
+              'http://10.0.2.2:5000/api/v1/entries/$journalEntryId/images',
+            );
+            final request = http.MultipartRequest('POST', uploadUri);
+
+            for (var image in _images) {
+              final mimeType =
+                  lookupMimeType(image.path)?.split('/') ?? ['image', 'jpeg'];
+              request.files.add(
+                await http.MultipartFile.fromPath(
+                  'file',
+                  image.path,
+                  contentType: MediaType(mimeType[0], mimeType[1]),
+                ),
+              );
+            }
+
+            final uploadResponse = await request.send();
+
+            if (uploadResponse.statusCode != 200 &&
+                uploadResponse.statusCode != 201) {
+              throw Exception(
+                'Image upload failed with status ${uploadResponse.statusCode}',
+              );
+            }
+          } catch (e) {
+            print("❗ Error uploading images : $e");
+          }
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Journal entry submitted!')),
+        );
+
+        _resetForm();
+      } else {
+        throw Exception('Failed to submit journal entry');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
+
+  void _resetForm() {
+    _nameController.clear();
+    _textController.clear();
+    _images.clear();
+    selectedDateTime = DateTime.now();
+    setState(() {});
+  }
+
+  // final imagePicker = ImagePicker();
+
+  // Future<void> selectImage() async {
+  //   final picked = await imagePicker.pickImage(
+  //     source: ImageSource.gallery,
+  //     maxWidth: 800,
+  //     imageQuality: 80,
+  //   );
+  //   if (picked != null) {
+  //     setState(() {
+  //       imageFiles.add(File(picked.path));
+  //     });
+  //   }
+  // }
 
   Future<void> pickDateTime() async {
     final newDateTime = await DateTimePicker.pickDateTime(
@@ -55,7 +172,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
 
   void removeImage(int index) {
     setState(() {
-      imageFiles.removeAt(index);
+      _images.removeAt(index);
     });
   }
 
@@ -145,28 +262,35 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
               ),
             const SizedBox(height: 24),
             Text('Title', style: theme.textTheme.titleMedium),
-            const CustomTextInput(hintText: 'Add an optional title...'),
+            CustomTextInput(
+              controller: _nameController,
+              hintText: 'Add an optional title...',
+            ),
+
             const SizedBox(height: 24),
             Text('Entry', style: theme.textTheme.titleMedium),
-            const JournalEntryTextField(hintText: 'Write something...'),
+            JournalEntryTextField(
+              controller: _textController,
+              hintText: 'Write something...',
+              maxLines: 5,
+            ),
             const SizedBox(height: 24),
             Text(
-              'Add images (${imageFiles.length}/5)',
+              'Add images (${_images.length}/5)',
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 12),
-
             Wrap(
               spacing: 12,
               runSpacing: 12,
               children: [
-                ...List.generate(imageFiles.length, (index) {
+                ...List.generate(_images.length, (index) {
                   return Stack(
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: Image.file(
-                          imageFiles[index],
+                          _images[index],
                           width: 100,
                           height: 100,
                           fit: BoxFit.cover,
@@ -176,7 +300,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                         top: 4,
                         right: 4,
                         child: GestureDetector(
-                          onTap: () => removeImage(index),
+                          onTap: () => setState(() => _images.removeAt(index)),
                           child: Container(
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
@@ -194,14 +318,14 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                     ],
                   );
                 }),
-                if (imageFiles.length < 5)
+                if (_images.length < 5)
                   GestureDetector(
                     onTap: () async {
                       final picked =
                           await CustomImageSelector.pickSingleImage();
                       if (picked != null) {
                         setState(() {
-                          imageFiles.add(picked);
+                          _images.add(picked);
                         });
                       }
                     },
@@ -226,18 +350,20 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
             SizedBox(
               width: double.infinity,
               child: CustomButton(
-                onPressed: () {
-                  if (selectedMoodIndex == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Please select a mood')),
-                    );
-                    return;
-                  }
-                  // TODO: Save logic
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Entry saved (TODO)')),
-                  );
-                },
+                onPressed: _submitForm,
+                // onPressed: () {
+                //   // if (selectedMoodIndex == null) {
+                //   //   ScaffoldMessenger.of(context).showSnackBar(
+                //   //     const SnackBar(content: Text('Please select a mood')),
+                //   //   );
+                //   //   return;
+                //   // }
+
+                //   // TODO: Save logic
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(content: Text('Entry saved (TODO)')),
+                //   );
+                // },
                 label: 'Create entry',
               ),
             ),
@@ -246,4 +372,13 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _textController.dispose();
+    super.dispose();
+  }
+
+  lookupMimeType(String path) {}
 }
