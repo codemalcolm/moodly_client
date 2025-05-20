@@ -213,8 +213,6 @@ class _FastiesScreenState extends State<FastiesScreen> {
                 isCompleted: completedFasties.contains(item['task']),
                 onCompletedOrDelete: (bool wasCompleted) async {
                   final prefs = await SharedPreferences.getInstance();
-                  final completed =
-                      prefs.getStringList(completedFastiesKey) ?? [];
                   if (wasCompleted) {
                     final completed =
                         prefs.getStringList(completedFastiesKey) ?? [];

@@ -88,7 +88,7 @@
     "category": "nutrition"
   },
   {
-    "task": "Write down what you ate today - honestly and without judgment.",
+    "task": "Write down what you ate today, honestly without judgment.",
     "category": "nutrition"
   },
   {
@@ -100,7 +100,7 @@
     "category": "nutrition"
   },
   {
-    "task": "Read the ingredients list of a processed product - do you recognize everything?",
+    "task": "Read and learn about the ingredients list of a processed product.",
     "category": "nutrition"
   },
   {
@@ -120,7 +120,7 @@
     "category": "nutrition"
   },
   {
-    "task": "Consciously eat slowly and mindfully today - without distractions.",
+    "task": "Consciously eat slowly and mindfully today without distractions.",
     "category": "nutrition"
   },
   {
@@ -276,7 +276,7 @@
     "category": "creative writing"
   },
   {
-    "task": "Invent a character with an unusual job and describe their daily routine.",
+    "task": "Invent a character with an unusual job, describe their daily routine.",
     "category": "creative writing"
   },
   {
@@ -316,7 +316,7 @@
     "category": "creative writing"
   },
   {
-    "task": "Find ten different ways in which a story could begin with “Once upon a time...”.",
+    "task": "Find ten different alternatives to “Once upon a time...”.",
     "category": "creative writing"
   },
   {
@@ -380,7 +380,7 @@
     "category": "better mood"
   },
   {
-    "task": "Say something kind out loud, even if it's just to your plant or pet.",
+    "task": "Say something kind out loud, even if it's just to your plant.",
     "category": "better mood"
   },
   {
@@ -388,11 +388,11 @@
     "category": "better mood"
   },
   {
-    "task": "Do something playful: doodle, hum, skip, or spin in your chair.",
+    "task": "Do something playful (doodle, hum, spin in your chair).",
     "category": "better mood"
   },
   {
-    "task": "Imagine a place where you feel safe and happy - go there in your mind.",
+    "task": "Imagine a place where you feel safe and happy.",
     "category": "better mood"
   },
   {
@@ -400,7 +400,7 @@
     "category": "better mood"
   },
   {
-    "task": "Try a 1-minute laughter meditation (yes, fake laughing counts!).",
+    "task": "Try a 1-minute laughter meditation (fake laughing counts!).",
     "category": "better mood"
   },
   {
@@ -412,15 +412,15 @@
     "category": "better mood"
   },
   {
-    "task": "Send a “just checking in” message to someone you haven't talked to in a while.",
+    "task": "Send a “just checking in” message to someone.",
     "category": "socializing"
   },
   {
-    "task": "Ask a coworker, classmate, or neighbor how their day is going.",
+    "task": "Ask whoever you want how their day is going.",
     "category": "socializing"
   },
   {
-    "task": "Compliment someone sincerely. Their outfit, idea, or energy.",
+    "task": "Compliment someone sincerely however you like.",
     "category": "socializing"
   },
   {
@@ -440,11 +440,11 @@
     "category": "socializing"
   },
   {
-    "task": "Invite someone for a short walk or a coffee. even if it's virtual.",
+    "task": "Invite someone for a walk or a coffee, even if it's virtual.",
     "category": "socializing"
   },
   {
-    "task": "Ask someone about a hobby or interest they've mentioned before.",
+    "task": "Ask someone about a hobby/interest they've mentioned before.",
     "category": "socializing"
   },
   {
@@ -452,7 +452,7 @@
     "category": "socializing"
   },
   {
-    "task": "Join a local group or online community (book club, game night, etc.).",
+    "task": "Join a local group or online community (book club, game night, ...).",
     "category": "socializing"
   },
   {
@@ -476,7 +476,7 @@
     "category": "socializing"
   },
   {
-    "task": "Share something personal but light, like your favorite snack or song lately.",
+    "task": "Share something personal but light, like your favorite snack or song.",
     "category": "socializing"
   },
   {
@@ -484,7 +484,7 @@
     "category": "socializing"
   },
   {
-    "task": "Practice active listening in your next conversation, focus fully on the other person.",
+    "task": "Practice active listening in your next conversation.",
     "category": "socializing"
   },
   {
@@ -640,7 +640,7 @@
     "category": "planning"
   },
   {
-    "task": "Declutter your to-do list - remove what's no longer important.",
+    "task": "Declutter your to-do list, remove what's not that important.",
     "category": "planning"
   },
   {
@@ -728,7 +728,7 @@
     "category": "clean up"
   },
   {
-    "task": "Spend 5 minutes decluttering - whatever's in front of you.",
+    "task": "Spend 5 minutes decluttering, whatever's in front of you.",
     "category": "clean up"
   }
 ]

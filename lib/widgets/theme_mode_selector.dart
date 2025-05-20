@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moodly_client/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import '../theme/theme_notifier.dart';
 
@@ -12,7 +13,7 @@ class ThemeModeSelector extends StatelessWidget {
 
     Widget buildOption(ThemeMode mode, IconData icon, String label) {
       final isSelected = themeNotifier.themeMode == mode;
-      final selectedColor = theme.colorScheme.primary.withOpacity(0.15);
+      final selectedColor = getAccentBackgroundColor(theme.colorScheme.primary);
       final borderColor =
           isSelected ? theme.colorScheme.primary : Colors.transparent;
 

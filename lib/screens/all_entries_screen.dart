@@ -9,6 +9,29 @@ import 'package:moodly_client/widgets/entry_card.dart';
 class AllEntriesScreen extends StatefulWidget {
   const AllEntriesScreen({super.key});
 
+  Color _getBackgroundColorForMood(int? mood) {
+    switch (mood) {
+      case 0:
+        return const Color.fromARGB(138, 207, 32, 88);
+      case 1:
+        return const Color.fromARGB(138, 255, 117, 126);
+      case 2:
+        return const Color.fromARGB(139, 0, 150, 135);
+      case 3:
+        return const Color.fromARGB(138, 161, 27, 185);
+      case 4:
+        return const Color.fromARGB(138, 255, 134, 41);
+      case 5:
+        return const Color.fromARGB(149, 83, 75, 203);
+      case 6:
+        return const Color.fromARGB(136, 73, 226, 42);
+      case 7:
+        return const Color.fromARGB(149, 81, 58, 139);
+      default:
+        return Colors.transparent;
+    }
+  }
+
   @override
   State<AllEntriesScreen> createState() => _AllEntriesScreenState();
 }
@@ -56,8 +79,6 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final primaryColor = theme.primaryColor;
-    final bgColor = getAccentBackgroundColor(primaryColor);
 
     return Scaffold(
       body:
@@ -69,8 +90,7 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                 itemBuilder: (context, index) {
                   final day = dayEntries[index];
                   final mood = day['mood'];
-                  final date = DateTime.parse(day['dayEntryDate']);
-
+                  final bgColor = widget._getBackgroundColorForMood(mood);
                   final journalEntries = List<Map<String, dynamic>>.from(
                     day['journalEntries'] ?? [],
                   )..sort(
@@ -88,21 +108,34 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              DateFormat('dd.MM.yyyy').format(date),
+                              DateFormat(
+                                'dd.MM.yyyy',
+                              ).format(DateTime.parse(day['dayEntryDate'])),
                               style: theme.textTheme.titleMedium,
                             ),
                             if (mood != -1 && mood >= 0 && mood <= 7)
-                              SvgPicture.asset(
-                                'assets/icons/icon_mood_$mood.svg',
-                                width: 28,
-                                height: 28,
-                                colorFilter: ColorFilter.mode(
-                                  theme.colorScheme.secondary,
-                                  BlendMode.srcIn,
+                              Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: bgColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: SvgPicture.asset(
+                                    'assets/icons/icon_mood_$mood.svg',
+                                    colorFilter: ColorFilter.mode(
+                                      theme.brightness == Brightness.dark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
                                 ),
                               )
                             else
-                              const SizedBox(width: 28, height: 28),
+                              const SizedBox(width: 36, height: 36),
                           ],
                         ),
 
@@ -112,13 +145,25 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                             entry['entryDateAndTime'],
                           );
                           final time = DateFormat('HH:mm').format(entryDate);
+                          const String baseUrl =
+                              'http://10.0.2.2:5000/api/v1/images/';
+
+                          final images =
+                              (entry['images'] as List?)
+                                  ?.where((id) => id != null)
+                                  .map((id) => '$baseUrl${id.toString()}')
+                                  .toList() ??
+                              [];
+                          print('Images for entry "${entry['name']}": $images');
 
                           return EntryCard(
                             title: entry['name'] ?? '',
                             text: entry['entryText'] ?? '',
                             time: time,
-                            images: List<String>.from(entry['images'] ?? []),
-                            backgroundColor: bgColor,
+                            images: images,
+                            backgroundColor: getAccentBackgroundColor(
+                              theme.primaryColor,
+                            ),
                           );
                         }),
                       ],

@@ -12,14 +12,14 @@ class MoodsCard extends StatelessWidget {
   final ValueChanged<int> onMoodSelected;
 
   static List<String> moods = [
-    'assets/icons/icon_mood_angry.svg',
-    'assets/icons/icon_mood_good.svg',
-    'assets/icons/icon_mood_moody.svg',
-    'assets/icons/icon_mood_loving.svg',
-    'assets/icons/icon_mood_happy.svg',
-    'assets/icons/icon_mood_sad.svg',
-    'assets/icons/icon_mood_tired.svg',
-    'assets/icons/icon_mood_anxious.svg',
+    'assets/icons/icon_mood_0.svg',
+    'assets/icons/icon_mood_1.svg',
+    'assets/icons/icon_mood_2.svg',
+    'assets/icons/icon_mood_3.svg',
+    'assets/icons/icon_mood_4.svg',
+    'assets/icons/icon_mood_5.svg',
+    'assets/icons/icon_mood_6.svg',
+    'assets/icons/icon_mood_7.svg',
   ];
 
   static List<Color> moodColors = [

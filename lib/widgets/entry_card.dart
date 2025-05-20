@@ -50,7 +50,16 @@ class EntryCard extends StatelessWidget {
                 mainAxisSpacing: 4,
               ),
               itemBuilder: (context, index) {
-                return Image.network(images[index], fit: BoxFit.cover);
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    images[index],
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(Icons.broken_image, color: Colors.grey);
+                    },
+                  ),
+                );
               },
             ),
           ],
