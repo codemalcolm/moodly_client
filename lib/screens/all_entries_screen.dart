@@ -7,32 +7,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:moodly_client/theme/app_theme.dart';
 import 'package:moodly_client/widgets/entry_card.dart';
+import 'package:moodly_client/widgets/mood_utils.dart';
 
 class AllEntriesScreen extends StatefulWidget {
   const AllEntriesScreen({super.key});
-
-  Color _getBackgroundColorForMood(int? mood) {
-    switch (mood) {
-      case 0:
-        return const Color.fromARGB(138, 207, 32, 88);
-      case 1:
-        return const Color.fromARGB(138, 255, 117, 126);
-      case 2:
-        return const Color.fromARGB(139, 0, 150, 135);
-      case 3:
-        return const Color.fromARGB(138, 161, 27, 185);
-      case 4:
-        return const Color.fromARGB(138, 255, 134, 41);
-      case 5:
-        return const Color.fromARGB(149, 83, 75, 203);
-      case 6:
-        return const Color.fromARGB(136, 73, 226, 42);
-      case 7:
-        return const Color.fromARGB(149, 81, 58, 139);
-      default:
-        return Colors.transparent;
-    }
-  }
 
   @override
   State<AllEntriesScreen> createState() => _AllEntriesScreenState();
@@ -92,7 +70,7 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                 itemBuilder: (context, index) {
                   final day = dayEntries[index];
                   final mood = day['mood'];
-                  final bgColor = widget._getBackgroundColorForMood(mood);
+                  final bgColor = MoodUtils.moodColors[index];
                   final journalEntries = List<Map<String, dynamic>>.from(
                     day['journalEntries'] ?? [],
                   )..sort(

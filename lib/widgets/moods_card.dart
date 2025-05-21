@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:moodly_client/widgets/mood_utils.dart';
 
 class Mood {
   final String name;
@@ -20,17 +21,6 @@ class MoodsCard extends StatelessWidget {
     'assets/icons/icon_mood_5.svg',
     'assets/icons/icon_mood_6.svg',
     'assets/icons/icon_mood_7.svg',
-  ];
-
-  static List<Color> moodColors = [
-    const Color.fromARGB(138, 207, 32, 88),
-    const Color.fromARGB(138, 255, 117, 126),
-    const Color.fromARGB(139, 0, 150, 135),
-    const Color.fromARGB(138, 161, 27, 185),
-    const Color.fromARGB(138, 255, 134, 41),
-    const Color.fromARGB(149, 83, 75, 203),
-    const Color.fromARGB(136, 73, 226, 42),
-    const Color.fromARGB(149, 81, 58, 139),
   ];
 
   const MoodsCard({
@@ -68,7 +58,7 @@ class MoodsCard extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: moodColors[index],
+                    color: MoodUtils.moodColors[index],
                     shape: BoxShape.circle,
                     border: Border.all(
                       color:
