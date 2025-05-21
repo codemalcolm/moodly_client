@@ -539,9 +539,9 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                         ),
                                         imageBytes: decodedImages,
                                         backgroundColor:
-                                            getAccentBackgroundColor(
-                                              theme.primaryColor,
-                                            ),
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.surface,
                                       );
                                     })
                                   else
