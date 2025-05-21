@@ -21,6 +21,8 @@ enum SortOption { dateAsc, dateDesc, moodAsc, moodDesc }
 class _AllEntriesScreenState extends State<AllEntriesScreen> {
   List<Map<String, dynamic>> dayEntries = [];
   SortOption selectedSort = SortOption.dateDesc;
+  late ScrollController _scrollController;
+  bool _showScrollToTopButton = false;
 
   final Map<SortOption, String> sortApiMap = {
     SortOption.dateAsc: '+dayEntryDate',
@@ -32,7 +34,21 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
     loadData();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset > 300 && !_showScrollToTopButton) {
+      setState(() {
+        _showScrollToTopButton = true;
+      });
+    } else if (_scrollController.offset <= 300 && _showScrollToTopButton) {
+      setState(() {
+        _showScrollToTopButton = false;
+      });
+    }
   }
 
   Future<void> loadData() async {
@@ -62,6 +78,12 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
@@ -70,6 +92,7 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
           dayEntries.isEmpty
               ? const Center(child: CircularProgressIndicator())
               : ListView.builder(
+                controller: _scrollController,
                 padding: const EdgeInsets.all(16),
                 itemCount: dayEntries.length + 1,
                 itemBuilder: (context, index) {
@@ -177,6 +200,29 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                   );
                 },
               ),
+      floatingActionButton:
+          _showScrollToTopButton
+              ? FloatingActionButton(
+                onPressed: () {
+                  _scrollController.animateTo(
+                    0,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeOut,
+                  );
+                },
+                tooltip: 'Scroll to top',
+                shape: const CircleBorder(),
+                child: SvgPicture.asset(
+                  'assets/icons/icon_arrow_upward.svg',
+                  width: 32,
+                  height: 32,
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).colorScheme.onPrimary,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              )
+              : null,
     );
   }
 
@@ -194,24 +240,43 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
   }
 
   void _showSortMenu(BuildContext context) async {
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+
     final SortOption? selected = await showMenu<SortOption>(
       context: context,
-      position: const RelativeRect.fromLTRB(1000, 100, 16, 0),
+      position: RelativeRect.fromLTRB(
+        overlay.size.width - 56,
+        kToolbarHeight + 8,
+        16,
+        0,
+      ),
+      color: Theme.of(context).canvasColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       items:
           SortOption.values.map((option) {
+            final isSelected = option == selectedSort;
+
             return PopupMenuItem<SortOption>(
               value: option,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(_getSortLabel(option)),
-                  if (option == selectedSort)
-                    const Icon(
-                      Icons.check,
-                      color: Color.fromARGB(255, 45, 123, 117),
-                      size: 16,
-                    ),
-                ],
+              child: Container(
+                decoration:
+                    isSelected
+                        ? BoxDecoration(
+                          color: getAccentBackgroundColor(
+                            Theme.of(context).primaryColor,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        )
+                        : null,
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                child: Text(
+                  _getSortLabel(option),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
               ),
             );
           }).toList(),
