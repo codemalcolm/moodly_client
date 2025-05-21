@@ -16,8 +16,18 @@ class AllEntriesScreen extends StatefulWidget {
   State<AllEntriesScreen> createState() => _AllEntriesScreenState();
 }
 
+enum SortOption { dateAsc, dateDesc, moodAsc, moodDesc }
+
 class _AllEntriesScreenState extends State<AllEntriesScreen> {
   List<Map<String, dynamic>> dayEntries = [];
+  SortOption selectedSort = SortOption.dateDesc;
+
+  final Map<SortOption, String> sortApiMap = {
+    SortOption.dateAsc: '+dayEntryDate',
+    SortOption.dateDesc: '-dayEntryDate',
+    SortOption.moodAsc: '+mood',
+    SortOption.moodDesc: '-mood',
+  };
 
   @override
   void initState() {
@@ -27,9 +37,10 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
 
   Future<void> loadData() async {
     try {
+      final sortParam = sortApiMap[selectedSort];
       final response = await http.get(
         Uri.parse(
-          'http://10.0.2.2:5000/api/v1/days/all?page=1&limit=50&sort=+dayEntryDate',
+          'http://10.0.2.2:5000/api/v1/days/all?page=1&limit=50&sort=$sortParam',
         ),
       );
 
@@ -38,12 +49,6 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
 
         final List<Map<String, dynamic>> parsedResults =
             List<Map<String, dynamic>>.from(decoded['results']);
-
-        parsedResults.sort((a, b) {
-          final dateA = DateTime.parse(a['dayEntryDate']);
-          final dateB = DateTime.parse(b['dayEntryDate']);
-          return dateB.compareTo(dateA);
-        });
 
         setState(() {
           dayEntries = parsedResults;
@@ -66,11 +71,35 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
               ? const Center(child: CircularProgressIndicator())
               : ListView.builder(
                 padding: const EdgeInsets.all(16),
-                itemCount: dayEntries.length,
+                itemCount: dayEntries.length + 1,
                 itemBuilder: (context, index) {
-                  final day = dayEntries[index];
+                  if (index == 0) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: SvgPicture.asset(
+                              'assets/icons/icon_sorting.svg',
+                              width: 24,
+                              height: 24,
+                              colorFilter: ColorFilter.mode(
+                                Theme.of(context).colorScheme.secondary,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                            onPressed: () => _showSortMenu(context),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  final day = dayEntries[index - 1];
                   final mood = day['mood'];
-                  final bgColor = MoodUtils.moodColors[index];
+                  final bgColor = MoodUtils.moodColors[index - 1];
+
                   final journalEntries = List<Map<String, dynamic>>.from(
                     day['journalEntries'] ?? [],
                   )..sort(
@@ -78,7 +107,6 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                       a['entryDateAndTime'],
                     ).compareTo(DateTime.parse(b['entryDateAndTime'])),
                   );
-
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 24),
                     child: Column(
@@ -91,7 +119,7 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                               DateFormat(
                                 'dd.MM.yyyy',
                               ).format(DateTime.parse(day['dayEntryDate'])),
-                              style: theme.textTheme.titleMedium,
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
                             if (mood != -1 && mood >= 0 && mood <= 7)
                               Container(
@@ -106,7 +134,8 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                                   child: SvgPicture.asset(
                                     'assets/icons/icon_mood_$mood.svg',
                                     colorFilter: ColorFilter.mode(
-                                      theme.brightness == Brightness.dark
+                                      Theme.of(context).brightness ==
+                                              Brightness.dark
                                           ? Colors.white
                                           : Colors.black,
                                       BlendMode.srcIn,
@@ -135,13 +164,14 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                                     (img) => base64Decode(img['imageData']),
                                   )
                                   .toList();
+
                           return EntryCard(
                             title: entry['name'] ?? '',
                             text: entry['entryText'] ?? '',
                             time: time,
                             imageBytes: imagesData,
                             backgroundColor: getAccentBackgroundColor(
-                              theme.primaryColor,
+                              Theme.of(context).primaryColor,
                             ),
                           );
                         }),
@@ -151,5 +181,46 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                 },
               ),
     );
+  }
+
+  String _getSortLabel(SortOption option) {
+    switch (option) {
+      case SortOption.dateAsc:
+        return 'Date ↑';
+      case SortOption.dateDesc:
+        return 'Date ↓';
+      case SortOption.moodAsc:
+        return 'Mood ↑';
+      case SortOption.moodDesc:
+        return 'Mood ↓';
+    }
+  }
+
+  void _showSortMenu(BuildContext context) async {
+    final SortOption? selected = await showMenu<SortOption>(
+      context: context,
+      position: const RelativeRect.fromLTRB(1000, 100, 16, 0),
+      items:
+          SortOption.values.map((option) {
+            return PopupMenuItem<SortOption>(
+              value: option,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(_getSortLabel(option)),
+                  if (option == selectedSort)
+                    const Icon(Icons.check, color: Colors.green, size: 16),
+                ],
+              ),
+            );
+          }).toList(),
+    );
+
+    if (selected != null && selected != selectedSort) {
+      setState(() {
+        selectedSort = selected;
+      });
+      await loadData();
+    }
   }
 }

@@ -47,6 +47,7 @@ flutter:
    - assets/icons/icon_mood_7.svg
    - assets/icons/icon_settings.svg
    - assets/icons/icon_settings_outlined.svg
+   - assets/icons/icon_sorting.svg
    - assets/images/moodly_speech.png
    - assets/data/categories.json
    - assets/data/results.json
