@@ -85,7 +85,7 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                               width: 24,
                               height: 24,
                               colorFilter: ColorFilter.mode(
-                                Theme.of(context).colorScheme.secondary,
+                                theme.colorScheme.secondary,
                                 BlendMode.srcIn,
                               ),
                             ),
@@ -95,11 +95,8 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                       ),
                     );
                   }
-
                   final day = dayEntries[index - 1];
                   final mood = day['mood'];
-                  final bgColor = MoodUtils.moodColors[index - 1];
-
                   final journalEntries = List<Map<String, dynamic>>.from(
                     day['journalEntries'] ?? [],
                   )..sort(
@@ -126,7 +123,7 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                                 width: 36,
                                 height: 36,
                                 decoration: BoxDecoration(
-                                  color: bgColor,
+                                  color: MoodUtils.moodColors[mood],
                                   shape: BoxShape.circle,
                                 ),
                                 child: Padding(
@@ -209,7 +206,11 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                 children: [
                   Text(_getSortLabel(option)),
                   if (option == selectedSort)
-                    const Icon(Icons.check, color: Colors.green, size: 16),
+                    const Icon(
+                      Icons.check,
+                      color: Color.fromARGB(255, 45, 123, 117),
+                      size: 16,
+                    ),
                 ],
               ),
             );
