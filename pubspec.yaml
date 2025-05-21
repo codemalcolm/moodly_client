@@ -34,6 +34,7 @@ flutter:
    - assets/icons/icon_add_outlined.svg
    - assets/icons/icon_all_entries.svg
    - assets/icons/icon_all_entries_outlined.svg
+   - assets/icons/icon_arrow_upward.svg
    - assets/icons/icon_fasties_settings.svg
    - assets/icons/icon_home.svg
    - assets/icons/icon_home_outlined.svg
@@ -48,6 +49,7 @@ flutter:
    - assets/icons/icon_mood_7.svg
    - assets/icons/icon_settings.svg
    - assets/icons/icon_settings_outlined.svg
+   - assets/icons/icon_sorting.svg
    - assets/images/moodly_speech.png
    - assets/data/categories.json
    - assets/data/results.json

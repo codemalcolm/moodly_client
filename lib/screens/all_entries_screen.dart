@@ -16,20 +16,47 @@ class AllEntriesScreen extends StatefulWidget {
   State<AllEntriesScreen> createState() => _AllEntriesScreenState();
 }
 
+enum SortOption { dateAsc, dateDesc, moodAsc, moodDesc }
+
 class _AllEntriesScreenState extends State<AllEntriesScreen> {
   List<Map<String, dynamic>> dayEntries = [];
+  SortOption selectedSort = SortOption.dateDesc;
+  late ScrollController _scrollController;
+  bool _showScrollToTopButton = false;
+
+  final Map<SortOption, String> sortApiMap = {
+    SortOption.dateAsc: '+dayEntryDate',
+    SortOption.dateDesc: '-dayEntryDate',
+    SortOption.moodAsc: '+mood',
+    SortOption.moodDesc: '-mood',
+  };
 
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
     loadData();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset > 300 && !_showScrollToTopButton) {
+      setState(() {
+        _showScrollToTopButton = true;
+      });
+    } else if (_scrollController.offset <= 300 && _showScrollToTopButton) {
+      setState(() {
+        _showScrollToTopButton = false;
+      });
+    }
   }
 
   Future<void> loadData() async {
     try {
+      final sortParam = sortApiMap[selectedSort];
       final response = await http.get(
         Uri.parse(
-          'http://10.0.2.2:5000/api/v1/days/all?page=1&limit=50&sort=+dayEntryDate',
+          'http://10.0.2.2:5000/api/v1/days/all?page=1&limit=50&sort=$sortParam',
         ),
       );
 
@@ -38,12 +65,6 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
 
         final List<Map<String, dynamic>> parsedResults =
             List<Map<String, dynamic>>.from(decoded['results']);
-
-        parsedResults.sort((a, b) {
-          final dateA = DateTime.parse(a['dayEntryDate']);
-          final dateB = DateTime.parse(b['dayEntryDate']);
-          return dateB.compareTo(dateA);
-        });
 
         setState(() {
           dayEntries = parsedResults;
@@ -57,6 +78,12 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
@@ -65,12 +92,34 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
           dayEntries.isEmpty
               ? const Center(child: CircularProgressIndicator())
               : ListView.builder(
+                controller: _scrollController,
                 padding: const EdgeInsets.all(16),
-                itemCount: dayEntries.length,
+                itemCount: dayEntries.length + 1,
                 itemBuilder: (context, index) {
-                  final day = dayEntries[index];
+                  if (index == 0) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: SvgPicture.asset(
+                              'assets/icons/icon_sorting.svg',
+                              width: 24,
+                              height: 24,
+                              colorFilter: ColorFilter.mode(
+                                theme.colorScheme.secondary,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                            onPressed: () => _showSortMenu(context),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  final day = dayEntries[index - 1];
                   final mood = day['mood'];
-                  final bgColor = MoodUtils.moodColors[index];
                   final journalEntries = List<Map<String, dynamic>>.from(
                     day['journalEntries'] ?? [],
                   )..sort(
@@ -78,7 +127,6 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                       a['entryDateAndTime'],
                     ).compareTo(DateTime.parse(b['entryDateAndTime'])),
                   );
-
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 24),
                     child: Column(
@@ -91,14 +139,14 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                               DateFormat(
                                 'dd.MM.yyyy',
                               ).format(DateTime.parse(day['dayEntryDate'])),
-                              style: theme.textTheme.titleMedium,
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
                             if (mood != -1 && mood >= 0 && mood <= 7)
                               Container(
                                 width: 36,
                                 height: 36,
                                 decoration: BoxDecoration(
-                                  color: bgColor,
+                                  color: MoodUtils.moodColors[mood],
                                   shape: BoxShape.circle,
                                 ),
                                 child: Padding(
@@ -106,7 +154,8 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                                   child: SvgPicture.asset(
                                     'assets/icons/icon_mood_$mood.svg',
                                     colorFilter: ColorFilter.mode(
-                                      theme.brightness == Brightness.dark
+                                      Theme.of(context).brightness ==
+                                              Brightness.dark
                                           ? Colors.white
                                           : Colors.black,
                                       BlendMode.srcIn,
@@ -135,13 +184,14 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                                     (img) => base64Decode(img['imageData']),
                                   )
                                   .toList();
+
                           return EntryCard(
                             title: entry['name'] ?? '',
                             text: entry['entryText'] ?? '',
                             time: time,
                             imageBytes: imagesData,
                             backgroundColor: getAccentBackgroundColor(
-                              theme.primaryColor,
+                              Theme.of(context).primaryColor,
                             ),
                           );
                         }),
@@ -150,6 +200,93 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                   );
                 },
               ),
+      floatingActionButton:
+          _showScrollToTopButton
+              ? FloatingActionButton(
+                onPressed: () {
+                  _scrollController.animateTo(
+                    0,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeOut,
+                  );
+                },
+                tooltip: 'Scroll to top',
+                shape: const CircleBorder(),
+                child: SvgPicture.asset(
+                  'assets/icons/icon_arrow_upward.svg',
+                  width: 32,
+                  height: 32,
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).colorScheme.onPrimary,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              )
+              : null,
     );
+  }
+
+  String _getSortLabel(SortOption option) {
+    switch (option) {
+      case SortOption.dateAsc:
+        return 'Date ↑';
+      case SortOption.dateDesc:
+        return 'Date ↓';
+      case SortOption.moodAsc:
+        return 'Mood ↑';
+      case SortOption.moodDesc:
+        return 'Mood ↓';
+    }
+  }
+
+  void _showSortMenu(BuildContext context) async {
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+
+    final SortOption? selected = await showMenu<SortOption>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        overlay.size.width - 56,
+        kToolbarHeight + 8,
+        16,
+        0,
+      ),
+      color: Theme.of(context).canvasColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      items:
+          SortOption.values.map((option) {
+            final isSelected = option == selectedSort;
+
+            return PopupMenuItem<SortOption>(
+              value: option,
+              child: Container(
+                decoration:
+                    isSelected
+                        ? BoxDecoration(
+                          color: getAccentBackgroundColor(
+                            Theme.of(context).primaryColor,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        )
+                        : null,
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                child: Text(
+                  _getSortLabel(option),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+    );
+
+    if (selected != null && selected != selectedSort) {
+      setState(() {
+        selectedSort = selected;
+      });
+      await loadData();
+    }
   }
 }
