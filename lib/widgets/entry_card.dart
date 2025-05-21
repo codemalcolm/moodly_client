@@ -31,7 +31,6 @@ class EntryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Titel und Uhrzeit nebeneinander, Uhrzeit rechts
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

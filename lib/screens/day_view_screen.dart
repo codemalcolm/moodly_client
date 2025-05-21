@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,10 +11,12 @@ import 'package:moodly_client/blocs/daily_task_bloc/daily_task_bloc.dart';
 import 'package:moodly_client/blocs/daily_task_bloc/daily_task_event.dart';
 import 'package:moodly_client/blocs/daily_task_bloc/daily_task_state.dart';
 import 'package:moodly_client/models/day_entry_model.dart';
+import 'package:moodly_client/theme/app_theme.dart';
 
 import 'package:moodly_client/widgets/calendar_tab.dart';
 import 'package:moodly_client/widgets/custom_button_small.dart';
 import 'package:moodly_client/widgets/daily_task_card_bloc.dart';
+import 'package:moodly_client/widgets/entry_card.dart';
 import 'package:moodly_client/widgets/moods_card.dart';
 
 class DayViewScreen extends StatefulWidget {
@@ -164,74 +167,6 @@ class _DayViewScreenState extends State<DayViewScreen> {
 
   void _showCreateTaskDialog(BuildContext context, String dayId) {
     final taskNameController = TextEditingController();
-    void _showCreateTaskDialog(BuildContext context, String dayId) {
-      final taskNameController = TextEditingController();
-
-      showDialog(
-        context: context,
-        builder:
-            (_) => BlocProvider.value(
-              value: context.read<DailyTaskBloc>(),
-              child: Dialog(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Add Daily Task',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: taskNameController,
-                        decoration: InputDecoration(
-                          hintText: 'Enter task name',
-                          hintStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text(
-                              'Cancel',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          SizedBox(
-                            width: 150,
-                            child: CustomButtonSmall(
-                              onPressed: () {
-                                final name = taskNameController.text.trim();
-                                if (name.isNotEmpty) {
-                                  context.read<DailyTaskBloc>().add(
-                                    AddDailyTask(dayId, name),
-                                  );
-                                  Navigator.pop(context);
-                                }
-                              },
-                              label: 'Create task',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-      );
-    }
 
     showDialog(
       context: context,
@@ -587,55 +522,28 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                   const SizedBox(height: 10),
                                   if (_dayEntry != null &&
                                       _dayEntry!.journalEntries.isNotEmpty)
-                                    ..._dayEntry!.journalEntries.map(
-                                      (entry) => Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Name: ${entry.name}',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
+                                    ..._dayEntry!.journalEntries.map((entry) {
+                                      final List<Uint8List> decodedImages =
+                                          entry.images.map((image) {
+                                            return base64Decode(
+                                              image.imageData,
+                                            );
+                                          }).toList();
+                                      return EntryCard(
+                                        title: entry.name,
+                                        text: entry.entryText,
+                                        time: DateFormat.Hm().format(
+                                          DateTime.parse(
+                                            entry.entryDateAndTime,
+                                          ),
+                                        ),
+                                        imageBytes: decodedImages,
+                                        backgroundColor:
+                                            getAccentBackgroundColor(
+                                              theme.primaryColor,
                                             ),
-                                          ),
-                                          Text('Text: ${entry.entryText}'),
-                                          const SizedBox(height: 10),
-
-                                          Wrap(
-                                            spacing: 8,
-                                            runSpacing: 8,
-                                            children: [
-                                              ...entry.images.asMap().entries.map((
-                                                image,
-                                              ) {
-                                                final index = image.key;
-                                                final imageMap =
-                                                    image
-                                                        .value; // The object containing image details
-
-                                                final base64Image =
-                                                    imageMap.imageData;
-
-                                                // Decode the base64 string into bytes
-                                                final decodedBytes =
-                                                    base64Decode(base64Image);
-
-                                                return Stack(
-                                                  children: [
-                                                    Image.memory(
-                                                      decodedBytes,
-                                                      width: 100,
-                                                      height: 100,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                  ],
-                                                );
-                                              }),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    )
+                                      );
+                                    })
                                   else
                                     const Text(
                                       'No journal entries for this day.',
