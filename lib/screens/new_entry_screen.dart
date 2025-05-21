@@ -153,6 +153,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
   Future<void> _submitForm() async {
     final name = _nameController.text.trim();
     final text = _textController.text.trim();
+    final int? index = selectedMoodIndex;
 
     print("$name , $text, ${selectedDateTime.toIso8601String()}");
 
@@ -176,6 +177,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        await updateMood(index);
         final data = jsonDecode(response.body);
         final journalEntryId = data?['journalEntry']['_id'];
 
@@ -275,6 +277,27 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
     });
   }
 
+  Future<void> updateMood(int? moodIndex) async {
+    final uri = Uri.parse('http://10.0.2.2:5000/api/v1/days/${_dayEntry!.id}');
+    final Map<String, dynamic> requestBody = {"mood": moodIndex.toString()};
+
+    try {
+      final response = await http.patch(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(requestBody),
+      );
+
+      if (response.statusCode != 200) {
+        print("Failed to update mood:");
+      }
+    } catch (e) {
+      setState(() {
+        print("Error updating mood: $e");
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -363,7 +386,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                         children: [
                           MoodsCard(
                             selectedMoodIndex: selectedMoodIndex,
-                            onMoodSelected: (index) {
+                            onMoodSelected: (index) async {
                               setState(() {
                                 selectedMoodIndex = index;
                                 showMoodSelector = false;
