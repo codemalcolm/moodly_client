@@ -224,32 +224,29 @@ class _FastiesScreenState extends State<FastiesScreen> {
                       completedFasties = completed;
                       fasties.removeAt(index);
                     });
-                    final eligible =
-                        allFasties
-                            .where(
-                              (f) =>
-                                  selectedCategories.contains(f['category']) &&
-                                  !fasties.any((e) => e['task'] == f['task']) &&
-                                  !completedFasties.contains(f['task']),
-                            )
-                            .toList();
-                    if (eligible.isNotEmpty) {
-                      eligible.shuffle();
-                      final newFastie = eligible.first;
-                      setState(() {
-                        fasties.insert(index, newFastie);
-                      });
-                      await prefs.setString(
-                        storedFastiesKey,
-                        json.encode(fasties),
-                      );
-                    } else {
-                      await prefs.setString(
-                        storedFastiesKey,
-                        json.encode(fasties),
-                      );
-                    }
+                  } else {
+                    setState(() {
+                      fasties.removeAt(index);
+                    });
                   }
+                  final eligible =
+                      allFasties
+                          .where(
+                            (f) =>
+                                selectedCategories.contains(f['category']) &&
+                                !fasties.any((e) => e['task'] == f['task']) &&
+                                !completedFasties.contains(f['task']),
+                          )
+                          .toList();
+
+                  if (eligible.isNotEmpty) {
+                    eligible.shuffle();
+                    final newFastie = eligible.first;
+                    setState(() {
+                      fasties.insert(index, newFastie);
+                    });
+                  }
+                  await prefs.setString(storedFastiesKey, json.encode(fasties));
                 },
               );
             }),
