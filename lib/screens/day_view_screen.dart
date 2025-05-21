@@ -106,20 +106,23 @@ class _DayViewScreenState extends State<DayViewScreen> {
             }
           });
         } else {
-          setState(() {
-            _dayEntryError = 'No data found for this day.';
-          });
+          final errorJson = json.decode(response.body);
+          if (errorJson['errorName'] == 'CastError') {
+            setState(() {
+              _dayEntryError = 'Undefined date provided';
+            });
+          } else {
+            // Create new day entry if no CastError
+            await createDayEntry(formattedDate);
+          }
+
+          await createDayEntry(formattedDate);
         }
       } else {
         final errorJson = json.decode(response.body);
-        if (errorJson['errorName'] == 'CastError') {
-          setState(() {
-            _dayEntryError = 'Undefined date provided';
-          });
-        } else {
-          // Create new day entry if no CastError
-          await createDayEntry(formattedDate);
-        }
+        setState(() {
+          _dayEntryError = errorJson;
+        });
       }
     } catch (e) {
       setState(() {
