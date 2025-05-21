@@ -7,13 +7,13 @@ class ThemeNotifier extends ChangeNotifier {
   static const String _themeModeKey = 'themeMode';
   static const String _primaryColorKey = 'primaryColor';
 
-  late ThemeData _currentTheme;
-  late ThemeMode _themeMode;
+  late final Future<void> isInitialized;
+  late ThemeData _currentTheme = AppTheme.lightTheme(AccentColors.blue);
+  late ThemeMode _themeMode = ThemeMode.system;
   Color _primaryColor = AccentColors.blue;
 
   ThemeNotifier() {
-    _themeMode = ThemeMode.system;
-    _loadSettings();
+    isInitialized = _loadSettings();
   }
 
   ThemeData get theme => _currentTheme;

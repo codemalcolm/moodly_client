@@ -13,13 +13,27 @@ import 'package:provider/provider.dart';
 
 void main() {
   final dailyTaskRepository = DailyTaskRepository();
+  final themeNotifier = ThemeNotifier();
 
   runApp(
     RepositoryProvider<DailyTaskRepository>.value(
       value: dailyTaskRepository,
-      child: ChangeNotifierProvider(
-        create: (_) => ThemeNotifier(),
-        child: const MyApp(),
+      child: ChangeNotifierProvider.value(
+        value: themeNotifier,
+        child: FutureBuilder(
+          future: themeNotifier.isInitialized,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return const MyApp();
+            } else {
+              return const MaterialApp(
+                home: Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                ),
+              );
+            }
+          },
+        ),
       ),
     ),
   );

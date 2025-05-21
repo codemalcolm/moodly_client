@@ -11,24 +11,26 @@ class DayEntry {
   DayEntry({
     required this.id,
     required this.dayEntryDate,
-    required this.mood,
+    this.mood,
     required this.journalEntries,
     required this.dailyTasks,
   });
 
   factory DayEntry.fromJson(Map<String, dynamic> json) {
     return DayEntry(
-      id: json['_id'],
-      dayEntryDate: json['dayEntryDate'],
-      mood: json['mood'],
+      id: json['_id'] as String,
+      dayEntryDate: json['dayEntryDate'] as String,
+      mood: json['mood'] as int?,
       journalEntries:
-          (json['journalEntries'] as List<dynamic>)
-              .map((e) => JournalEntry.fromJson(e))
-              .toList(),
+          (json['journalEntries'] as List<dynamic>?)
+              ?.map((e) => JournalEntry.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
       dailyTasks:
-          (json['dailyTasks'] as List<dynamic>)
-              .map((e) => DailyTask.fromJson(e))
-              .toList(),
+          (json['dailyTasks'] as List<dynamic>?)
+              ?.map((e) => DailyTask.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
   }
 }
