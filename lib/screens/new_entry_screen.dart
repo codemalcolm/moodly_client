@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:moodly_client/blocs/journal_entry_bloc/journal_entry_bloc.dart';
+import 'package:moodly_client/blocs/journal_entry_bloc/journal_entry_event.dart';
 import 'package:moodly_client/models/day_entry_model.dart';
 import 'package:moodly_client/widgets/custom_button.dart';
 import 'package:moodly_client/widgets/custom_image_selector.dart';
@@ -73,16 +76,6 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
   final _nameController = TextEditingController();
   final _textController = TextEditingController();
 
-  Future<void> _pickImages() async {
-    final pickedFiles = await CustomImageSelector.pickMultipleImages();
-
-    if (pickedFiles.isNotEmpty) {
-      setState(() {
-        _images.addAll(pickedFiles);
-      });
-    }
-  }
-
   Future<void> fetchDayEntryMood(DateTime date) async {
     setState(() {
       _isLoadingDayEntry = true;
@@ -127,107 +120,29 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
     }
   }
 
-  // Future<void> updateMood(int moodIndex) async {
-  //   final uri = Uri.parse(
-  //     'http://10.0.2.2:5000/api/v1/days/${_dayEntry!.id}/mood',
-  //   );
-  //   final Map<String, dynamic> requestBody = {"mood": moodIndex.toString()};
-
-  //   try {
-  //     final response = await http.patch(
-  //       uri,
-  //       headers: {'Content-Type': 'application/json'},
-  //       body: json.encode(requestBody),
-  //     );
-
-  //     if (response.statusCode != 200) {
-  //       print("Failed to update mood:");
-  //     }
-  //   } catch (e) {
-  //     setState(() {
-  //       print("Error updating mood: $e");
-  //     });
-  //   }
-  // }
-
   Future<void> _submitForm() async {
     final name = _nameController.text.trim();
     final text = _textController.text.trim();
     final int? index = selectedMoodIndex;
 
-    print("$name , $text, ${selectedDateTime.toIso8601String()}");
-
-    if (name.isEmpty || text.isEmpty) {
+    if (text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a name and text.')),
+        const SnackBar(content: Text('Please enter journal entry text.')),
       );
       return;
     }
 
-    try {
-      // 1. Create the journal entry
-      final response = await http.post(
-        Uri.parse('http://10.0.2.2:5000/api/v1/entries'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'name': name,
-          'entryText': text,
-          'entryDateAndTime': selectedDateTime.toIso8601String(),
-        }),
-      );
+    context.read<JournalEntryBloc>().add(
+      CreateJournalEntry(
+        name: name,
+        entryText: text,
+        entryDateAndTime: selectedDateTime,
+        images: _images,
+      ),
+    );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        await updateMood(index);
-        final data = jsonDecode(response.body);
-        final journalEntryId = data?['journalEntry']['_id'];
-
-        // 2. Upload images (if any)
-        if (_images.isNotEmpty) {
-          print("❗ works");
-          try {
-            final uploadUri = Uri.parse(
-              'http://10.0.2.2:5000/api/v1/entries/$journalEntryId/images',
-            );
-            final request = http.MultipartRequest('POST', uploadUri);
-
-            for (var image in _images) {
-              final mimeType =
-                  lookupMimeType(image.path)?.split('/') ?? ['image', 'jpeg'];
-              request.files.add(
-                await http.MultipartFile.fromPath(
-                  'file',
-                  image.path,
-                  contentType: MediaType(mimeType[0], mimeType[1]),
-                ),
-              );
-            }
-
-            final uploadResponse = await request.send();
-
-            if (uploadResponse.statusCode != 200 &&
-                uploadResponse.statusCode != 201) {
-              throw Exception(
-                'Image upload failed with status ${uploadResponse.statusCode}',
-              );
-            }
-          } catch (e) {
-            print("❗ Error uploading images : $e");
-          }
-        }
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Journal entry submitted!')),
-        );
-
-        _resetForm();
-      } else {
-        throw Exception('Failed to submit journal entry');
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
-    }
+    await updateMood(index);
+    _resetForm();
   }
 
   void _resetForm() {
@@ -237,21 +152,6 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
     selectedDateTime = DateTime.now();
     setState(() {});
   }
-
-  // final imagePicker = ImagePicker();
-
-  // Future<void> selectImage() async {
-  //   final picked = await imagePicker.pickImage(
-  //     source: ImageSource.gallery,
-  //     maxWidth: 800,
-  //     imageQuality: 80,
-  //   );
-  //   if (picked != null) {
-  //     setState(() {
-  //       imageFiles.add(File(picked.path));
-  //     });
-  //   }
-  // }
 
   Future<void> pickDateTime() async {
     final newDateTime = await DateTimePicker.pickDateTime(
