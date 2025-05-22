@@ -29,6 +29,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
   }
 
   List<Widget> _buildCalendarGrid() {
+    final theme = Theme.of(context);
     final firstDayOfMonth = DateTime(
       _displayedMonth.year,
       _displayedMonth.month,
@@ -58,16 +59,14 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
                   width: 34,
                   height: 34,
                   decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.primary.withOpacity(0.3),
+                    color: theme.colorScheme.primary.withOpacity(0.3),
                     shape: BoxShape.circle,
                   ),
                 ),
               Text(
                 day.toString(),
                 style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color,
+                  color: theme.textTheme.bodyLarge!.color,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
               ),

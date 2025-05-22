@@ -177,7 +177,7 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                               DateFormat(
                                 'dd.MM.yyyy',
                               ).format(DateTime.parse(day['dayEntryDate'])),
-                              style: Theme.of(context).textTheme.titleMedium,
+                              style: theme.textTheme.titleMedium,
                             ),
                             if (mood != -1 && mood >= 0 && mood <= 7)
                               Container(
@@ -192,8 +192,7 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                                   child: SvgPicture.asset(
                                     'assets/icons/icon_mood_$mood.svg',
                                     colorFilter: ColorFilter.mode(
-                                      Theme.of(context).brightness ==
-                                              Brightness.dark
+                                      theme.brightness == Brightness.dark
                                           ? Colors.white
                                           : Colors.black,
                                       BlendMode.srcIn,
@@ -229,7 +228,7 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                             time: time,
                             imageBytes: imagesData,
                             backgroundColor: getAccentBackgroundColor(
-                              Theme.of(context).primaryColor,
+                              theme.primaryColor,
                             ),
                           );
                         }),
@@ -255,7 +254,7 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                   width: 32,
                   height: 32,
                   colorFilter: ColorFilter.mode(
-                    Theme.of(context).colorScheme.onPrimary,
+                    theme.colorScheme.onPrimary,
                     BlendMode.srcIn,
                   ),
                 ),
@@ -278,6 +277,7 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
   }
 
   void _showSortMenu(BuildContext context) async {
+    final theme = Theme.of(context);
     final RenderBox overlay =
         Overlay.of(context).context.findRenderObject() as RenderBox;
 
@@ -289,7 +289,7 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
         16,
         0,
       ),
-      color: Theme.of(context).canvasColor,
+      color: theme.canvasColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       items:
           SortOption.values.map((option) {
@@ -301,16 +301,14 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                 decoration:
                     isSelected
                         ? BoxDecoration(
-                          color: getAccentBackgroundColor(
-                            Theme.of(context).primaryColor,
-                          ),
+                          color: getAccentBackgroundColor(theme.primaryColor),
                           borderRadius: BorderRadius.circular(8),
                         )
                         : null,
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                 child: Text(
                   _getSortLabel(option),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight:
                         isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
@@ -323,7 +321,7 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
     if (selected != null && selected != selectedSort) {
       setState(() {
         selectedSort = selected;
-        _currentPage = 1; 
+        _currentPage = 1;
         _hasMoreData = true;
         dayEntries.clear();
       });

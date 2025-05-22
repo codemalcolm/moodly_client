@@ -51,7 +51,7 @@ class _FastiesSettingsScreenState extends State<FastiesSettingsScreen> {
   void toggleCategorySelection(String category) {
     setState(() {
       if (selectedCategories.contains(category)) {
-        if (selectedCategories.length > 4) {
+        if (selectedCategories.length > 3) {
           selectedCategories.remove(category);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(

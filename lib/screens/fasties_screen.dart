@@ -2,7 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_svg/svg.dart';
+import 'package:moodly_client/theme/app_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:moodly_client/data/fastie_repository.dart';
+import 'package:moodly_client/services/fastie_service.dart';
 
 class FastiesScreen extends StatefulWidget {
   const FastiesScreen({super.key});
@@ -14,6 +17,8 @@ class _FastiesScreenState extends State<FastiesScreen> {
   late String todayKey;
   late String storedFastiesKey;
   late String completedFastiesKey;
+  final repository = FastieRepository();
+  final service = FastieService();
   List<Map<String, dynamic>> allFasties = [];
   List<Map<String, dynamic>> fasties = [];
   List<String> completedFasties = [];
@@ -64,7 +69,7 @@ class _FastiesScreenState extends State<FastiesScreen> {
     allFasties = jsonList.cast<Map<String, dynamic>>();
     final stored = prefs.getString('dailyFasties_$today');
     if (stored != null) {
-      fasties = List<Map<String, dynamic>>.from(json.decode(stored));
+      fasties = await repository.loadFasties(storedFastiesKey);
     } else {
       fasties = generateFastiesAndSave(prefs, today);
     }
@@ -96,21 +101,18 @@ class _FastiesScreenState extends State<FastiesScreen> {
   }
 
   void replaceFastie(int index) async {
-    final prefs = await SharedPreferences.getInstance();
-    final eligible =
-        allFasties
-            .where(
-              (f) =>
-                  selectedCategories.contains(f['category']) &&
-                  !fasties.any((e) => e['task'] == f['task']),
-            )
-            .toList();
-    if (eligible.isNotEmpty) {
-      eligible.shuffle();
+    final newFastie = service.getReplacementFastie(
+      allFasties: allFasties,
+      currentFasties: fasties,
+      completedFasties: completedFasties,
+      selectedCategories: selectedCategories,
+    );
+
+    if (newFastie != null) {
       setState(() {
-        fasties[index] = eligible.first;
+        fasties[index] = newFastie;
       });
-      await prefs.setString(storedFastiesKey, json.encode(fasties));
+      await repository.saveFasties(storedFastiesKey, fasties);
     }
   }
 
@@ -126,7 +128,7 @@ class _FastiesScreenState extends State<FastiesScreen> {
             children: [
               Expanded(
                 child: Text(
-                  "Don't forget to look after yourself today!",
+                  "Don't forget to take care of yourself today!",
                   style: theme.textTheme.titleMedium,
                 ),
               ),
@@ -151,7 +153,9 @@ class _FastiesScreenState extends State<FastiesScreen> {
                     context: context,
                     builder:
                         (context) => AlertDialog(
-                          title: const Text('About Fasties'),
+                          backgroundColor: theme.colorScheme.surface,
+                          title: const Text('What are Fasties?'),
+                          titleTextStyle: theme.textTheme.titleLarge,
                           content: const Text(
                             'Fasties are small, spontaneous challenges designed to bring variety into your day. '
                             'They help you achieve your goals in a playful way while supporting your mental and physical well-being.',
@@ -159,7 +163,7 @@ class _FastiesScreenState extends State<FastiesScreen> {
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('Got it'),
+                              child: const Text('Got it!'),
                             ),
                           ],
                         ),
@@ -170,7 +174,7 @@ class _FastiesScreenState extends State<FastiesScreen> {
                   width: 30,
                   height: 30,
                   colorFilter: ColorFilter.mode(
-                    Theme.of(context).colorScheme.secondary,
+                    theme.colorScheme.secondary,
                     BlendMode.srcIn,
                   ),
                 ),
@@ -197,7 +201,7 @@ class _FastiesScreenState extends State<FastiesScreen> {
                   width: 30,
                   height: 30,
                   colorFilter: ColorFilter.mode(
-                    Theme.of(context).colorScheme.secondary,
+                    theme.colorScheme.secondary,
                     BlendMode.srcIn,
                   ),
                 ),
@@ -283,9 +287,13 @@ class _FastiesScreenState extends State<FastiesScreen> {
     required bool isCompleted,
     void Function(bool isCompleted)? onCompletedOrDelete,
   }) {
-    final textStyle = TextStyle(
-      fontSize: 16,
-      color: isCompleted ? Colors.grey : null,
+    final theme = Theme.of(context);
+    final textStyle = theme.textTheme.bodyMedium!.copyWith(
+      fontSize: 13,
+      color:
+          isCompleted
+              ? theme.colorScheme.secondary
+              : theme.textTheme.bodyMedium!.color,
       decoration: isCompleted ? TextDecoration.lineThrough : null,
     );
 
@@ -295,9 +303,9 @@ class _FastiesScreenState extends State<FastiesScreen> {
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Theme.of(context).dividerColor),
+          border: Border.all(color: theme.dividerColor),
         ),
         height: 80,
         child: Row(

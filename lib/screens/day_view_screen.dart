@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,7 +9,6 @@ import 'package:moodly_client/blocs/daily_task_bloc/daily_task_bloc.dart';
 import 'package:moodly_client/blocs/daily_task_bloc/daily_task_event.dart';
 import 'package:moodly_client/blocs/daily_task_bloc/daily_task_state.dart';
 import 'package:moodly_client/models/day_entry_model.dart';
-import 'package:moodly_client/theme/app_theme.dart';
 import 'package:moodly_client/widgets/calendar_tab.dart';
 import 'package:moodly_client/widgets/custom_button_small.dart';
 import 'package:moodly_client/widgets/daily_task_card_bloc.dart';
@@ -400,9 +398,7 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                                 height: 24,
                                                 child: CircleAvatar(
                                                   backgroundColor:
-                                                      Theme.of(
-                                                        context,
-                                                      ).colorScheme.primary,
+                                                      theme.colorScheme.primary,
                                                   foregroundColor: Colors.white,
                                                   child: const Icon(
                                                     Icons.add,
@@ -533,9 +529,7 @@ class _DayViewScreenState extends State<DayViewScreen> {
                                         ),
                                         imageBytes: decodedImages,
                                         backgroundColor:
-                                            Theme.of(
-                                              context,
-                                            ).colorScheme.surface,
+                                            theme.colorScheme.surface,
                                       );
                                     })
                                   else
