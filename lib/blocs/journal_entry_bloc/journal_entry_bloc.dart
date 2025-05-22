@@ -31,7 +31,7 @@ class JournalEntryBloc extends Bloc<JournalEntryEvent, JournalEntryState> {
         body: jsonEncode({
           'name': event.name,
           'entryText': event.entryText,
-          'entryDateAndTime': event.entryDateAndTime.toIso8601String(),
+          'entryDateAndTime': "${event.entryDateAndTime.toIso8601String()}+00:00",
         }),
       );
 
@@ -40,11 +40,14 @@ class JournalEntryBloc extends Bloc<JournalEntryEvent, JournalEntryState> {
         final journalEntryId = data['journalEntry']['_id'];
 
         if (event.images.isNotEmpty) {
-          final uploadUri = Uri.parse('$_baseUrl/entries/$journalEntryId/images');
+          final uploadUri = Uri.parse(
+            '$_baseUrl/entries/$journalEntryId/images',
+          );
           final uploadRequest = http.MultipartRequest('POST', uploadUri);
 
           for (final image in event.images) {
-            final mimeType = lookupMimeType(image.path)?.split('/') ?? ['image', 'jpeg'];
+            final mimeType =
+                lookupMimeType(image.path)?.split('/') ?? ['image', 'jpeg'];
             uploadRequest.files.add(
               await http.MultipartFile.fromPath(
                 'file',
@@ -55,7 +58,8 @@ class JournalEntryBloc extends Bloc<JournalEntryEvent, JournalEntryState> {
           }
 
           final uploadResponse = await uploadRequest.send();
-          if (uploadResponse.statusCode != 200 && uploadResponse.statusCode != 201) {
+          if (uploadResponse.statusCode != 200 &&
+              uploadResponse.statusCode != 201) {
             throw Exception('Image upload failed');
           }
         }

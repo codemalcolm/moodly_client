@@ -24,6 +24,11 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
   late ScrollController _scrollController;
   bool _showScrollToTopButton = false;
 
+  int _currentPage = 1;
+  final int _limit = 3;
+  bool _isLoadingMore = false;
+  bool _hasMoreData = true;
+
   final Map<SortOption, String> sortApiMap = {
     SortOption.dateAsc: '+dayEntryDate',
     SortOption.dateDesc: '-dayEntryDate',
@@ -36,7 +41,7 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
     super.initState();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    loadData();
+    loadData(isInitial: true);
   }
 
   void _scrollListener() {
@@ -49,31 +54,53 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
         _showScrollToTopButton = false;
       });
     }
+
+    // Infinite scroll
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 100) {
+      loadData(page: _currentPage);
+    }
   }
 
-  Future<void> loadData() async {
+  Future<void> loadData({int page = 1, bool isInitial = false}) async {
+    if (_isLoadingMore || !_hasMoreData) return;
+
+    setState(() {
+      _isLoadingMore = true;
+    });
+
     try {
       final sortParam = sortApiMap[selectedSort];
       final response = await http.get(
         Uri.parse(
-          'http://10.0.2.2:5000/api/v1/days/all?page=1&limit=50&sort=$sortParam',
+          'http://10.0.2.2:5000/api/v1/days/all?page=$page&limit=$_limit&sort=$sortParam',
         ),
       );
 
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
-
         final List<Map<String, dynamic>> parsedResults =
             List<Map<String, dynamic>>.from(decoded['results']);
 
         setState(() {
-          dayEntries = parsedResults;
+          if (isInitial) {
+            dayEntries = parsedResults;
+          } else {
+            dayEntries.addAll(parsedResults);
+          }
+
+          _currentPage = decoded['next']?['page'] ?? _currentPage;
+          _hasMoreData = decoded['next'] != null;
         });
       } else {
         debugPrint('Failed to load data: ${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Error loading data: $e');
+    } finally {
+      setState(() {
+        _isLoadingMore = false;
+      });
     }
   }
 
@@ -94,7 +121,7 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
               : ListView.builder(
                 controller: _scrollController,
                 padding: const EdgeInsets.all(16),
-                itemCount: dayEntries.length + 1,
+                itemCount: dayEntries.length + 2,
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return Padding(
@@ -117,6 +144,17 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
                         ],
                       ),
                     );
+                  }
+                  if (index == dayEntries.length + 1) {
+                    // Bottom spinner
+                    return _hasMoreData
+                        ? const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                        : const SizedBox.shrink();
                   }
                   final day = dayEntries[index - 1];
                   final mood = day['mood'];
@@ -285,8 +323,11 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
     if (selected != null && selected != selectedSort) {
       setState(() {
         selectedSort = selected;
+        _currentPage = 1; 
+        _hasMoreData = true;
+        dayEntries.clear();
       });
-      await loadData();
+      loadData();
     }
   }
 }

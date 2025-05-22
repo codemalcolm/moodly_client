@@ -90,7 +90,6 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
     try {
       final response = await http.get(uri);
       if (response.statusCode == 200) {
-        print("❗");
         final jsonResponse = json.decode(response.body);
         if (jsonResponse['dayEntry'] != null) {
           setState(() {
@@ -158,6 +157,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
       context: context,
       initialDateTime: selectedDateTime,
     );
+
     if (newDateTime != null) {
       setState(() {
         selectedDateTime = newDateTime;
