@@ -90,7 +90,6 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
     try {
       final response = await http.get(uri);
       if (response.statusCode == 200) {
-        print("❗");
         final jsonResponse = json.decode(response.body);
         if (jsonResponse['dayEntry'] != null) {
           setState(() {
@@ -158,6 +157,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
       context: context,
       initialDateTime: selectedDateTime,
     );
+
     if (newDateTime != null) {
       setState(() {
         selectedDateTime = newDateTime;
@@ -179,7 +179,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
 
   Future<void> updateMood(int? moodIndex) async {
     final uri = Uri.parse('http://10.0.2.2:5000/api/v1/days/${_dayEntry!.id}');
-    final Map<String, dynamic> requestBody = {"mood": moodIndex.toString()};
+    final Map<String, dynamic> requestBody = {"mood": moodIndex};
 
     try {
       final response = await http.patch(
