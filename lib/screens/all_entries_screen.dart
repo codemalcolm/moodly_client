@@ -323,8 +323,11 @@ class _AllEntriesScreenState extends State<AllEntriesScreen> {
     if (selected != null && selected != selectedSort) {
       setState(() {
         selectedSort = selected;
+        _currentPage = 1; 
+        _hasMoreData = true;
+        dayEntries.clear();
       });
-      await loadData();
+      loadData();
     }
   }
 }
