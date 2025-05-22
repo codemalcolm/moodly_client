@@ -1,5 +1,3 @@
-// This is the updated CalendarOverviewPage with weekday headers and a barrel-style month/year picker.
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -40,8 +38,7 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
       _displayedMonth.year,
       _displayedMonth.month,
     );
-    final weekdayOffset =
-        (firstDayOfMonth.weekday + 6) % 7; // Start from Monday
+    final weekdayOffset = (firstDayOfMonth.weekday + 6) % 7;
 
     return List.generate(weekdayOffset + daysInMonth, (index) {
       if (index < weekdayOffset) return const SizedBox();
@@ -86,7 +83,6 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
     int selectedYear = _displayedMonth.year;
     int selectedMonth = _displayedMonth.month;
 
-    // Mark picker as showing
     setState(() {
       _monthYearPickerShowing = !_monthYearPickerShowing;
     });
@@ -191,7 +187,6 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
               ),
             ),
 
-            // Weekday Headers
             Row(
               children:
                   ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -211,7 +206,6 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
                       .toList(),
             ),
 
-            // Calendar Grid
             GridView.count(
               shrinkWrap: true,
               crossAxisCount: 7,
@@ -221,22 +215,20 @@ class _CalendarOverviewPageState extends State<CalendarOverviewPage> {
             ),
 
             if (_selectedDate != null)
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      DateFormat('EEEE, MMMM d, yyyy').format(_selectedDate!),
-                      style: const TextStyle(fontSize: 17),
-                    ),
-                    const Text("Data about day displayed here"),
-                    const SizedBox(height: 280),
-                    CustomButton(
-                      onPressed: () => Navigator.pop(context, _selectedDate),
-                      label: 'View Details',
-                    ),
-                  ],
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    DateFormat('EEEE, MMMM d, yyyy').format(_selectedDate!),
+                    style: const TextStyle(fontSize: 17),
+                  ),
+                  const Text("Data about day displayed here"),
+                  const SizedBox(height: 280),
+                  CustomButton(
+                    onPressed: () => Navigator.pop(context, _selectedDate),
+                    label: 'View Details',
+                  ),
+                ],
               ),
           ],
         ),

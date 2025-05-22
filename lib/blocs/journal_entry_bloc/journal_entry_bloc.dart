@@ -1,11 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:bloc/bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
-
 import 'journal_entry_event.dart';
 import 'journal_entry_state.dart';
 
@@ -31,7 +28,8 @@ class JournalEntryBloc extends Bloc<JournalEntryEvent, JournalEntryState> {
         body: jsonEncode({
           'name': event.name,
           'entryText': event.entryText,
-          'entryDateAndTime': "${event.entryDateAndTime.toIso8601String()}+00:00",
+          'entryDateAndTime':
+              "${event.entryDateAndTime.toIso8601String()}+00:00",
         }),
       );
 

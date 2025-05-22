@@ -7,7 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:moodly_client/blocs/journal_entry_bloc/journal_entry_bloc.dart';
 import 'package:moodly_client/blocs/journal_entry_bloc/journal_entry_event.dart';
-import 'package:moodly_client/models/day_entry_model.dart';
 import 'package:moodly_client/widgets/custom_button.dart';
 import 'package:moodly_client/widgets/custom_image_selector.dart';
 import 'package:moodly_client/widgets/custom_text_input.dart';
@@ -15,7 +14,6 @@ import 'package:moodly_client/widgets/date_time_picker.dart';
 import 'package:moodly_client/widgets/journal_entry_textfield.dart';
 import 'package:moodly_client/widgets/moods_card.dart';
 import 'package:intl/intl.dart';
-import 'package:http_parser/http_parser.dart';
 
 class NewEntryScreen extends StatefulWidget {
   const NewEntryScreen({super.key});
@@ -389,19 +387,6 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                       width: double.infinity,
                       child: CustomButton(
                         onPressed: _submitForm,
-                        // onPressed: () {
-                        //   // if (selectedMoodIndex == null) {
-                        //   //   ScaffoldMessenger.of(context).showSnackBar(
-                        //   //     const SnackBar(content: Text('Please select a mood')),
-                        //   //   );
-                        //   //   return;
-                        //   // }
-
-                        //   // TODO: Save logic
-                        //   ScaffoldMessenger.of(context).showSnackBar(
-                        //     const SnackBar(content: Text('Entry saved (TODO)')),
-                        //   );
-                        // },
                         label: 'Create entry',
                       ),
                     ),

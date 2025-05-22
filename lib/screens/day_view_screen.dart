@@ -1,6 +1,5 @@
 import 'dart:ffi';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -12,7 +11,6 @@ import 'package:moodly_client/blocs/daily_task_bloc/daily_task_event.dart';
 import 'package:moodly_client/blocs/daily_task_bloc/daily_task_state.dart';
 import 'package:moodly_client/models/day_entry_model.dart';
 import 'package:moodly_client/theme/app_theme.dart';
-
 import 'package:moodly_client/widgets/calendar_tab.dart';
 import 'package:moodly_client/widgets/custom_button_small.dart';
 import 'package:moodly_client/widgets/daily_task_card_bloc.dart';
@@ -112,7 +110,6 @@ class _DayViewScreenState extends State<DayViewScreen> {
               _dayEntryError = 'Undefined date provided';
             });
           } else {
-            // Create new day entry if no CastError
             await createDayEntry(formattedDate);
           }
 
@@ -156,7 +153,6 @@ class _DayViewScreenState extends State<DayViewScreen> {
     }
   }
 
-  final DateTime _baseDate = DateTime.now();
   DateTime _selectedDate = DateTime.now();
 
   Future<String> fetchMessage() async {
@@ -248,7 +244,7 @@ class _DayViewScreenState extends State<DayViewScreen> {
   final PageController _pageController = PageController(
     initialPage: _referencePage,
   );
-  int _currentPage = _referencePage; // track current page
+  int _currentPage = _referencePage;
 
   DateTime _getDateFromPage(int pageIndex) {
     int offset = pageIndex - _referencePage;
@@ -294,11 +290,6 @@ class _DayViewScreenState extends State<DayViewScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final weekStart = _selectedDate.subtract(
-      Duration(days: _selectedDate.weekday - 1),
-    );
-    final month = DateFormat('MMMM').format(_selectedDate);
-    final year = DateFormat('yyyy').format(_selectedDate);
 
     return Scaffold(
       body: SafeArea(
