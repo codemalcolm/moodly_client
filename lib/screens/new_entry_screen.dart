@@ -179,7 +179,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
 
   Future<void> updateMood(int? moodIndex) async {
     final uri = Uri.parse('http://10.0.2.2:5000/api/v1/days/${_dayEntry!.id}');
-    final Map<String, dynamic> requestBody = {"mood": moodIndex};
+    final Map<String, dynamic> requestBody = {"mood": moodIndex.toString()};
 
     try {
       final response = await http.patch(
