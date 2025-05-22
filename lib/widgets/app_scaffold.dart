@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moodly_client/blocs/daily_task_bloc/daily_task_bloc.dart';
 import 'package:moodly_client/blocs/daily_task_bloc/daily_task_repository.dart';
@@ -64,9 +65,7 @@ class AppScaffold extends StatelessWidget {
         if (!didPop) {
           final shouldPop = await _showExitDialog(context);
           if (context.mounted && shouldPop!) {
-            Navigator.of(
-              context,
-            ).maybePop(); // oder SystemNavigator.pop() wenn du die App schließen willst
+            Navigator.of(context).maybePop();
           }
         }
       },
@@ -213,7 +212,10 @@ class AppScaffold extends StatelessWidget {
               child: const Text('No'),
             ),
             TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+                SystemNavigator.pop();
+              },
               child: const Text('Yes'),
             ),
           ],
