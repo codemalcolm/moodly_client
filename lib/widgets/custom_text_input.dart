@@ -6,6 +6,7 @@ class CustomTextInput extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final TextInputType keyboardType;
   final bool obscureText;
+  final TextEditingController? controller;
 
   const CustomTextInput({
     super.key,
@@ -14,6 +15,7 @@ class CustomTextInput extends StatelessWidget {
     this.onChanged,
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
+    this.controller,
   });
 
   @override
@@ -34,7 +36,8 @@ class CustomTextInput extends StatelessWidget {
         ],
       ),
       child: TextFormField(
-        initialValue: initialValue,
+        controller: controller,
+        initialValue: controller == null ? initialValue : null,
         onChanged: onChanged,
         keyboardType: keyboardType,
         obscureText: obscureText,
@@ -57,3 +60,4 @@ class CustomTextInput extends StatelessWidget {
     );
   }
 }
+

@@ -10,7 +10,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_svg: ^2.0.7
+  equatable: ^2.0.7
   flutter_bloc: ^9.1.1
+  http_parser: ^4.0.2
   http: ^1.3.0
   image_picker: ^0.8.7+4
   intl: ^0.20.2
@@ -32,23 +34,25 @@ flutter:
    - assets/icons/icon_add_outlined.svg
    - assets/icons/icon_all_entries.svg
    - assets/icons/icon_all_entries_outlined.svg
+   - assets/icons/icon_arrow_upward.svg
    - assets/icons/icon_fasties_settings.svg
    - assets/icons/icon_home.svg
    - assets/icons/icon_home_outlined.svg
    - assets/icons/icon_info.svg
-   - assets/icons/icon_mood_angry.svg
-   - assets/icons/icon_mood_anxious.svg
-   - assets/icons/icon_mood_good.svg
-   - assets/icons/icon_mood_happy.svg
-   - assets/icons/icon_mood_loving.svg
-   - assets/icons/icon_mood_moody.svg
-   - assets/icons/icon_mood_sad.svg
-   - assets/icons/icon_mood_tired.svg
+   - assets/icons/icon_mood_0.svg
+   - assets/icons/icon_mood_1.svg
+   - assets/icons/icon_mood_2.svg
+   - assets/icons/icon_mood_3.svg
+   - assets/icons/icon_mood_4.svg
+   - assets/icons/icon_mood_5.svg
+   - assets/icons/icon_mood_6.svg
+   - assets/icons/icon_mood_7.svg
    - assets/icons/icon_settings.svg
    - assets/icons/icon_settings_outlined.svg
+   - assets/icons/icon_sorting.svg
    - assets/images/moodly_speech.png
    - assets/data/categories.json
-   - assets/data/days.json
+   - assets/data/results.json
    - assets/data/fasties.json
    - assets/data/journalEntries.json
    - assets/data/moods.json
