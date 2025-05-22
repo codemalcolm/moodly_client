@@ -58,132 +58,167 @@ class AppScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar:
-          showAppBar
-              ? AppBar(
-                title: Text(_titles[currentIndex]),
-                centerTitle: true,
-                automaticallyImplyLeading: false,
-              )
-              : null,
-      body: _pages[currentIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: currentIndex,
-        onDestinationSelected: (int index) {
-          if (index != currentIndex) {
-            Navigator.pushReplacementNamed(context, _routes[index]);
+    return PopScope<Object?>(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, Object? result) async {
+        if (!didPop) {
+          final shouldPop = await _showExitDialog(context);
+          if (context.mounted && shouldPop!) {
+            Navigator.of(
+              context,
+            ).maybePop(); // oder SystemNavigator.pop() wenn du die App schließen willst
           }
-        },
-        indicatorColor: Colors.transparent,
-        destinations: <NavigationDestination>[
-          NavigationDestination(
-            icon: SvgPicture.asset(
-              'assets/icons/icon_home_outlined.svg',
-              width: 30,
-              height: 30,
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.secondary,
-                BlendMode.srcIn,
+        }
+      },
+      child: Scaffold(
+        appBar:
+            showAppBar
+                ? AppBar(
+                  title: Text(_titles[currentIndex]),
+                  centerTitle: true,
+                  automaticallyImplyLeading: false,
+                )
+                : null,
+        body: _pages[currentIndex],
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: currentIndex,
+          onDestinationSelected: (int index) {
+            if (index != currentIndex) {
+              Navigator.pushReplacementNamed(context, _routes[index]);
+            }
+          },
+          indicatorColor: Colors.transparent,
+          destinations: <NavigationDestination>[
+            NavigationDestination(
+              icon: SvgPicture.asset(
+                'assets/icons/icon_home_outlined.svg',
+                width: 30,
+                height: 30,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.secondary,
+                  BlendMode.srcIn,
+                ),
               ),
-            ),
-            selectedIcon: SvgPicture.asset(
-              'assets/icons/icon_home.svg',
-              width: 30,
-              height: 30,
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.primary,
-                BlendMode.srcIn,
+              selectedIcon: SvgPicture.asset(
+                'assets/icons/icon_home.svg',
+                width: 30,
+                height: 30,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.primary,
+                  BlendMode.srcIn,
+                ),
               ),
+              label: 'Home',
             ),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: SvgPicture.asset(
-              'assets/icons/icon_all_entries_outlined.svg',
-              width: 30,
-              height: 30,
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.secondary,
-                BlendMode.srcIn,
+            NavigationDestination(
+              icon: SvgPicture.asset(
+                'assets/icons/icon_all_entries_outlined.svg',
+                width: 30,
+                height: 30,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.secondary,
+                  BlendMode.srcIn,
+                ),
               ),
-            ),
-            selectedIcon: SvgPicture.asset(
-              'assets/icons/icon_all_entries.svg',
-              width: 30,
-              height: 30,
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.primary,
-                BlendMode.srcIn,
+              selectedIcon: SvgPicture.asset(
+                'assets/icons/icon_all_entries.svg',
+                width: 30,
+                height: 30,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.primary,
+                  BlendMode.srcIn,
+                ),
               ),
+              label: 'Journal',
             ),
-            label: 'Journal',
-          ),
-          NavigationDestination(
-            icon: SvgPicture.asset(
-              'assets/icons/icon_add_outlined.svg',
-              width: 30,
-              height: 30,
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.secondary,
-                BlendMode.srcIn,
+            NavigationDestination(
+              icon: SvgPicture.asset(
+                'assets/icons/icon_add_outlined.svg',
+                width: 30,
+                height: 30,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.secondary,
+                  BlendMode.srcIn,
+                ),
               ),
-            ),
-            selectedIcon: SvgPicture.asset(
-              'assets/icons/icon_add.svg',
-              width: 30,
-              height: 30,
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.primary,
-                BlendMode.srcIn,
+              selectedIcon: SvgPicture.asset(
+                'assets/icons/icon_add.svg',
+                width: 30,
+                height: 30,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.primary,
+                  BlendMode.srcIn,
+                ),
               ),
+              label: 'Add Entry',
             ),
-            label: 'Add Entry',
-          ),
-          NavigationDestination(
-            icon: SvgPicture.asset(
-              'assets/icons/moodly_icon_outlined.svg',
-              width: 30,
-              height: 30,
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.secondary,
-                BlendMode.srcIn,
+            NavigationDestination(
+              icon: SvgPicture.asset(
+                'assets/icons/moodly_icon_outlined.svg',
+                width: 30,
+                height: 30,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.secondary,
+                  BlendMode.srcIn,
+                ),
               ),
-            ),
-            selectedIcon: SvgPicture.asset(
-              'assets/icons/moodly_icon.svg',
-              width: 30,
-              height: 30,
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.primary,
-                BlendMode.srcIn,
+              selectedIcon: SvgPicture.asset(
+                'assets/icons/moodly_icon.svg',
+                width: 30,
+                height: 30,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.primary,
+                  BlendMode.srcIn,
+                ),
               ),
+              label: 'Moodly',
             ),
-            label: 'Moodly',
-          ),
-          NavigationDestination(
-            icon: SvgPicture.asset(
-              'assets/icons/icon_settings_outlined.svg',
-              width: 30,
-              height: 30,
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.secondary,
-                BlendMode.srcIn,
+            NavigationDestination(
+              icon: SvgPicture.asset(
+                'assets/icons/icon_settings_outlined.svg',
+                width: 30,
+                height: 30,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.secondary,
+                  BlendMode.srcIn,
+                ),
               ),
-            ),
-            selectedIcon: SvgPicture.asset(
-              'assets/icons/icon_settings.svg',
-              width: 30,
-              height: 30,
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.primary,
-                BlendMode.srcIn,
+              selectedIcon: SvgPicture.asset(
+                'assets/icons/icon_settings.svg',
+                width: 30,
+                height: 30,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.primary,
+                  BlendMode.srcIn,
+                ),
               ),
+              label: 'Settings',
             ),
-            label: 'Settings',
-          ),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+
+  Future<bool?> _showExitDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Leave now?'),
+          content: const Text('Do you really want to close Moodly?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('No'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Yes'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
