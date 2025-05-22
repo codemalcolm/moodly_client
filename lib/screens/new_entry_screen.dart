@@ -136,7 +136,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
         name: name,
         entryText: text,
         entryDateAndTime: selectedDateTime,
-        images: _images,
+        images: List<File>.from(_images),
       ),
     );
 
@@ -164,7 +164,6 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
         fetchDayEntryMood(selectedDateTime);
       });
     }
-    ;
   }
 
   String get formattedDateTime {
@@ -389,19 +388,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                       width: double.infinity,
                       child: CustomButton(
                         onPressed: _submitForm,
-                        // onPressed: () {
-                        //   // if (selectedMoodIndex == null) {
-                        //   //   ScaffoldMessenger.of(context).showSnackBar(
-                        //   //     const SnackBar(content: Text('Please select a mood')),
-                        //   //   );
-                        //   //   return;
-                        //   // }
 
-                        //   // TODO: Save logic
-                        //   ScaffoldMessenger.of(context).showSnackBar(
-                        //     const SnackBar(content: Text('Entry saved (TODO)')),
-                        //   );
-                        // },
                         label: 'Create entry',
                       ),
                     ),
