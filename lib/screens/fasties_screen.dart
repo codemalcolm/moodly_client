@@ -158,7 +158,8 @@ class _FastiesScreenState extends State<FastiesScreen> {
                           titleTextStyle: theme.textTheme.titleLarge,
                           content: const Text(
                             'Fasties are small, spontaneous challenges designed to bring variety into your day. '
-                            'They help you achieve your goals in a playful way while supporting your mental and physical well-being.',
+                            'They help you achieve your goals in a playful way while supporting your mental and physical well-being.'
+                            '\n\nYou can choose from different categories and get your personal creative and supportive input each day.',
                           ),
                           actions: [
                             TextButton(
